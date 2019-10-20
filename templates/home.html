@@ -1,11 +1,30 @@
-<!doctype html>
-<html>
-	<head>
-		<title>GUADR</title>
-	</head>
+{% extends "layout.html" %}
+{% block content %}
+	<section class="main-page">
+		<div class="food-list">
+			<h3>Food locations</h3>
+			{% for food in foods %}
+				<input type="radio" name="food" value={{food}}>{{food}}<br>
+			{% endfor %}
+		</div>
+		
+		<div class="location-list">
+		<h3>Delivery Locations</h3>
+			{% for location in locations %}
+				<input type="radio" name="location" value={{location}}>{{location}}<br>
+			{% endfor %}
+		</div>
 
-	<body>
-		<h1>Hello world</h1>
-	</body>
+		<div class="container">
+			<h2>How close is your delivery?</h2>
+			<div class="progress">
+				<div class="progress-bar" role="progressbar" aria-valuenow={{cur_per}} aria-valuemin="0" aria-valuemax="100" style="width: {{cur_per}}">
+				{{cur_per}}
+				</div>
+			</div>
+			<p><strong>Time remaining: </strong>{{rem_time}}</p>
+		</div>
+	</section>
 
-</html>
+	
+{% endblock content %}
