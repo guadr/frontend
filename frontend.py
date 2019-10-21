@@ -1,11 +1,11 @@
 from flask import Flask, render_template, url_for
 app = Flask(__name__)
 
-current_percentage = 0
+current_percentage = 30
 remaining_time = 100
 
-food_items = ["sandwhich","soda","candy"]
-delivery_locations = ["Foley Library", "Hemmingson NW Corner", "Herak NE Corner"]
+food_items = ["Sandwhich","Soda","Candy","Trail Mix","Beef Jerkey","Muffin"]
+delivery_locations = ["Foley Library", "Hemmingson NW Corner", "Herak NE Corner", "Crosby North Entrance"]
 
 @app.route("/")
 def hello():

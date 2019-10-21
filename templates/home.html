@@ -1,25 +1,34 @@
 {% extends "layout.html" %}
 {% block content %}
+	<h1 id="main-title"><strong>Place Your Order</strong></h1>
 	<section class="main-page">
 		<div class="food-list">
-			<h3>Food locations</h3>
-			{% for food in foods %}
-				<input type="radio" name="food" value={{food}}>{{food}}<br>
-			{% endfor %}
+			<h3>Food Items</h3>
+			<div class="food-container">
+				{% for food in foods %}
+					<div>
+						<input type="radio" name="food" value={{food}}>{{food}}<br>
+					</div>
+				{% endfor %}
+			</div>
 		</div>
 		
 		<div class="location-list">
-		<h3>Delivery Locations</h3>
-			{% for location in locations %}
-				<input type="radio" name="location" value={{location}}>{{location}}<br>
-			{% endfor %}
+			<h3>Delivery Locations</h3>
+			<div class="location-container">
+				{% for location in locations %}
+					<div>
+						<input type="radio" name="location" value={{location}}>{{location}}<br>
+					</div>
+				{% endfor %}
+			</div>
 		</div>
 
 		<div class="container">
 			<h2>How close is your delivery?</h2>
 			<div class="progress">
-				<div class="progress-bar" role="progressbar" aria-valuenow={{cur_per}} aria-valuemin="0" aria-valuemax="100" style="width: {{cur_per}}">
-				{{cur_per}}
+				<div class="progress-bar" role="progressbar" aria-valuenow="{{cur_per}}" aria-valuemin="0" aria-valuemax="100" style="width: {{cur_per}}%">
+				{{cur_per}}%
 				</div>
 			</div>
 			<p><strong>Time remaining: </strong>{{rem_time}}</p>
