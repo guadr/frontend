@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+		<link href="https://fonts.googleapis.com/css?family=Advent+Pro&display=swap" rel="stylesheet">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href= "{{ url_for('static', filename='style.css') }}"> 
+		{% if title %}
+			<title>{{title}}</title>
+		{% else %}
+			<title>GUADR</title>
+		{% endif %}
+	</head>
+
+	<body>
+		{% block content %}
+		{% endblock %}
+	</body>
+
+</html>
