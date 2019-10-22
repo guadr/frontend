@@ -17,6 +17,14 @@
 	<body>
 		{% block content %}
 		{% endblock %}
+	<script>
+	window.addEventListener("load", function() {
+		document.getElementById("order-button").addEventListener("click", function(){
+			document.getElementById("delivery-status-container").innerHTML = '<h2>How close is your delivery?</h2>	<div class="progress"> 	<div class="progress-bar" role="progressbar" aria-valuenow="{{cur_per}}" aria-valuemin="0" aria-valuemax="100" style="width: {{cur_per}}%"> {{cur_per}}% </div> </div> <p><strong>Time remaining: </strong>{{rem_time}}</p>';
+		});
+	});	
+
+	</script>
 	</body>
 
 </html>
