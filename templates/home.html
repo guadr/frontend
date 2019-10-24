@@ -28,17 +28,27 @@
 				<input id="order-button" type="button" value="Place Order">
 		</div>
 
+		
+
 		<div class="container" id="delivery-status-container">
 		</div>
-
-		<div class="container" id="delivery-map">
-	
-			<iframe width="600" height="400" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"
-				src={{loc_url}}
-				style="border: 1px solid black">
+		
+	</section>
+	<section class="map">
+		<div class="map-input-container">
+			<span>Enter latitude: </span>
+			<input id="latitude_enter" class="map-input" type="number" value="Enter latitude">
+			<span>Enter longitude: </span>
+			<input id="longitude_enter" class="map-input" type="number" value="Enter longitude">
+			<input id="map-go-button" class="map-input" type="button" value="Load map">
+		</div>
+		<div class="map-container">
+			<iframe width="600" height="400"
+				frameborder="0" scrolling="no"
+				marginheight="0" marginwidth="0"
+				id="openstreetmap"
+				src={{loc_url}} style="border: 2px solid black">
 			</iframe>
-			<br/>
-
 		</div>
 	</section>
 {% endblock content %}

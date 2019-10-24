@@ -22,8 +22,23 @@
 		document.getElementById("order-button").addEventListener("click", function(){
 			document.getElementById("delivery-status-container").innerHTML = '<h2>How close is your delivery?</h2>	<div class="progress"> 	<div class="progress-bar" role="progressbar" aria-valuenow="{{cur_per}}" aria-valuemin="0" aria-valuemax="100" style="width: {{cur_per}}%"> {{cur_per}}% </div> </div> <p><strong>Time remaining: </strong>{{rem_time}}</p>';
 		});
-	});	
+	});
+	
+	var lat_offset = 0.00633;
+	var long_offset = 0.00755;
 
+	window.addEventListener("load", function() {
+		document.getElementById("map-go-button").addEventListener("click", function(){
+			var lat =parseFloat(document.getElementById("latitude_enter").value);
+			var long = parseFloat(document.getElementById("longitude_enter").value);
+			console.log("Lat: " + lat + " Long: " + long);
+			var url = "https://www.openstreetmap.org/export/embed.html?bbox="
+				+ (long - long_offset) + "%2C" + (lat - lat_offset) + "%2C"
+				+ (long + long_offset) + "%2C" + (lat + lat_offset) + "&layer=mapnik&marker="
+				+ lat + "%2C" + long;
+			document.getElementById("openstreetmap").src=url;
+		});
+	});	
 	</script>
 	</body>
 
