@@ -31,10 +31,13 @@
 		
 
 		<div class="container" id="delivery-status-container">
+				<h2>How close is your delivery?</h2>
+					<div class="progress"> 
+						<div class="progress-bar" role="progressbar" aria-valuenow="{{cur_per}}" aria-valuemin="0" aria-valuemax="100" style="width: {{cur_per}}%"> {{cur_per}}% </div> 
+					</div> 
+					<p><strong>Time remaining: </strong>{{rem_time}}</p>';
 		</div>
-		
-	</section>
-	<section class="map">
+
 		<div class="map-input-container">
 			<span>Enter latitude: </span>
 			<input id="latitude_enter" class="map-input" type="number" value="Enter latitude">

@@ -23,6 +23,9 @@ section.map{
 	grid-template-columns: 1fr 1fr;
 }
 
+#delivery-status-container{
+	visibility: hidden;
+}
 .food-container{
 	display: grid;
 	grid-template-columns: 1fr 1fr;
@@ -30,14 +33,20 @@ section.map{
 .map-container{
 	display: grid;
 	grid-row: 4;
-	grid-column: 1;
+	grid-column: 2;
+	grid-template-columns: 1fr 1fr;
+	margin:15px;
+	padding:10px;
 }
 
 .map-input-container{
 	display: grid;
 	grid-row: 3;
-	grid-column: 1;
+	grid-column: 2;
+	grid-template-columns: 1fr 1fr;
 	border: 2px, black;
+	margin:15px;
+	padding:10px;
 }
 
 
