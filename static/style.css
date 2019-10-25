@@ -164,6 +164,11 @@ section.map{
 	grid-row: 5;
 }
 
+#map-layer-selector{
+	grid-column: 2;
+	grid-row: 3;
+}
+
 
 
 

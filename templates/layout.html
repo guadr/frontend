@@ -47,6 +47,12 @@
 	var crosby_long = -117.401291;
 	var default_layer = "hot"
 
+	var layer_selector = document.getElementById("map-layer-selector");
+	layer_selector.addEventListener('change', function() {
+  		default_layer=this.value;
+		console.log(default_layer);
+	}, false);
+
 	// event listener for "Load map" button
 	window.addEventListener("load", function() {
 		document.getElementById("map-go-button").addEventListener("click", function(){
