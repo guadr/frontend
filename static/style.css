@@ -32,7 +32,7 @@ section.map{
 .map-container{
 	display: grid;
 	grid-row: 4;
-	grid-column: 1;
+	grid-column: 2;
 	border-radius:25px;
 	background-color: lightgray;
 	margin:15px;
@@ -43,14 +43,16 @@ section.map{
 .map-input-container{
 	display: grid;
 	grid-row: 3;
-	grid-column: 1;
+	grid-column: 2;
 	border-radius:25px;
 	background-color: lightgray;
 	margin:15px;
 	padding:10px;
 	align-items: center;
 	grid-template-columns: 1fr 1fr;
+	justify-items: center;
 }
+
 
 
 .food-list{
@@ -106,28 +108,8 @@ section.map{
 	margin: 2px;
 }
 
-#map-go-button{
-	width: 25%;
-	grid-column: 1;
-	grid-row: 3;
-}
-
-#herak-go-button{
-	width: 25%;
-	grid-column: 2;
-	grid-row: 3;
-}
-
-#foley-go-button{
-	width: 25%;
-	grid-column: 1;
-	grid-row: 4;
-}
-
-#hemm-go-button{
-	width: 40%;
-	grid-column: 2;
-	grid-row: 4;
+.map-coord-input{
+	margin: 2px;
 }
 
 #enter-lat-text{
@@ -151,6 +133,38 @@ section.map{
 	grid-column: 2;
 	grid-row: 2;
 }
+
+#map-go-button{
+	width: 25%;
+	grid-column: 1;
+	grid-row: 3;
+}
+
+#herak-go-button{
+	width: 25%;
+	grid-column: 2;
+	grid-row: 4;
+}
+
+#foley-go-button{
+	width: 25%;
+	grid-column: 1;
+	grid-row: 4;
+}
+
+#hemm-go-button{
+	width: 40%;
+	grid-column: 2;
+	grid-row: 5;
+}
+
+#crosby-go-button{
+	width: 30%;
+	grid-column: 1;
+	grid-row: 5;
+}
+
+
 
 
 
