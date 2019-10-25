@@ -37,6 +37,7 @@ section.map{
 	background-color: lightgray;
 	margin:15px;
 	padding:10px;
+	
 }
 
 .map-input-container{
@@ -47,6 +48,8 @@ section.map{
 	background-color: lightgray;
 	margin:15px;
 	padding:10px;
+	align-items: center;
+	grid-template-columns: 1fr 1fr;
 }
 
 
@@ -96,11 +99,64 @@ section.map{
 	border: lightblue;
 }
 
-#map-go-button{
+.map-input-button{
 	background-color: lightblue;
 	text-align: center;
 	border: lightblue;
+	margin: 2px;
 }
+
+#map-go-button{
+	width: 25%;
+	grid-column: 1;
+	grid-row: 3;
+}
+
+#herak-go-button{
+	width: 25%;
+	grid-column: 2;
+	grid-row: 3;
+}
+
+#foley-go-button{
+	width: 25%;
+	grid-column: 1;
+	grid-row: 4;
+}
+
+#hemm-go-button{
+	width: 40%;
+	grid-column: 2;
+	grid-row: 4;
+}
+
+#enter-lat-text{
+	width: 60%;
+	grid-column: 1;
+	grid-row: 1;
+}
+
+#enter-long-text{
+	width: 60%;
+	grid-column: 1;
+	grid-row: 2;
+}
+
+#lat-enter{
+	grid-column: 2;
+	grid-row: 1;
+}
+
+#long-enter{
+	grid-column: 2;
+	grid-row: 2;
+}
+
+
+
+
+
+
 
 
 

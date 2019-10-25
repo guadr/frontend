@@ -38,18 +38,21 @@
 		
 	<section class="map">
 		<div class="map-input-container" id="map-input-container-div">
-			<span>Enter latitude: </span>
-			<input id="latitude_enter" class="map-input" type="number" value="Enter latitude">
-			<span>Enter longitude: </span>
-			<input id="longitude_enter" class="map-input" type="number" value="Enter longitude">
-			<input id="map-go-button" class="map-input" type="button" value="Load map">
+			<span id="enter-lat-text">Enter latitude: </span>
+			<input id="lat-enter" class="map-input" type="number" value="Enter latitude">
+			<span id="enter-long-text">Enter longitude: </span>
+			<input id="long-enter" class="map-input" type="number" value="Enter longitude">
+			<input id="map-go-button" class="map-input-button" type="button" value="Load map">
+			<input id="herak-go-button" class="map-input-button" type="button" value="Go to Herak">
+			<input id="foley-go-button" class="map-input-button" type="button" value="Go to Foley">
+			<input id="hemm-go-button" class="map-input-button" type="button" value="Go to Hemmingson">
 		</div>
 		<div class="map-container" id="map-container-div">
 			<iframe width="600" height="400"
 				frameborder="0" scrolling="no"
 				marginheight="0" marginwidth="0"
 				id="openstreetmap"
-				src={{loc_url}} style="border: 1px solid black">
+				src={{loc_url}}>
 			</iframe>
 		</div>
 	</section>
