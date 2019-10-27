@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-# frontend
-User-facing web application for guadr delivery system.
-=======
 # frontend
 User-facing web application for guadr delivery system.
 
@@ -16,4 +12,3 @@ pip install -r requirements.txt
 ```
 virtualenv .env && source .env/bin/activate && pip install -r requirements.txt
 ```
->>>>>>> master
