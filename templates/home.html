@@ -1,4 +1,9 @@
 {% extends "layout.html" %}
+<!-- 
+	Progress bar from: https://www.w3schools.com/bootstrap/bootstrap_progressbars.asp
+	Flask main site: http://flask.palletsprojects.com/en/1.1.x/
+	Flask quickstart: http://flask.palletsprojects.com/en/1.1.x/quickstart/#quickstart
+-->
 {% block content %}
 	<h1 id="main-title"><strong>Place Your Order</strong></h1>
 	<section class="main-page">
@@ -15,20 +20,118 @@
 		
 		<div class="location-list">
 			<h3>Delivery Locations</h3>
-			<div class="location-container">
-				{% for location in locations %}
-					<div>
-						<input type="radio" name="location" value={{location}}>{{location}}<br>
-					</div>
-				{% endfor %}
-			</div>
 		</div>
+
 		
 		<div id="order-button-div">
 				<input id="order-button" type="button" value="Place Order">
 		</div>
-
 		<div class="container" id="delivery-status-container">
+			<h2>How close is your delivery?</h2>
+				<div class="progress"> 
+					<div class="progress-bar" role="progressbar" aria-valuenow="{{cur_per}}" aria-valuemin="0" aria-valuemax="100" style="width: {{cur_per}}%"> {{cur_per}}% </div> 
+				</div> 
+				<p><strong>Time remaining: </strong>{{rem_time}}</p>;
 		</div>
 	</section>
+		
+	<section class="map">
+			<div class="map-input-container" id="map-input-container-div">
+			<span id="enter-lat-text">Enter latitude: </span>
+			<input id="lat-enter" class="map-coord-input" type="number" value="Enter latitude">
+			<span id="enter-long-text">Enter longitude: </span>
+			<input id="long-enter" class="map-coord-input" type="number" value="Enter longitude">
+			<input id="map-go-button" class="map-input-button" type="button" value="Load map">
+			<input id="herak-go-button" class="map-input-button" type="button" value="Go to Herak">
+			<input id="foley-go-button" class="map-input-button" type="button" value="Go to Foley">
+			<input id="hemm-go-button" class="map-input-button" type="button" value="Go to Hemmingson">
+			<input id="crosby-go-button" class="map-input-button" type="button" value="Go to Crosby">
+			<select name="Map View Options" id="map-layer-selector">
+				<option value="mapnik">Default</option>
+				<option value="hot">Humanitarian</option>
+				<option value="transportmap">Transport</option>
+				<option value="cyclemap">Cycle</option>
+			</select>
+		</div>
+
+				<div class="map-container" id="map-container-div">
+			<iframe width="600" height="400"
+				frameborder="0" scrolling="no"
+				marginheight="0" marginwidth="0"
+				id="openstreetmap"
+				src={{loc_url}}>
+			</iframe>
+		</div>
+	</section>
+	<script>
+		var default_latitude_offset = 0.000633;
+		var default_longitude_offset = 0.000755;
+		var herak_lat = 47.666859;
+		var herak_long = -117.401717;
+		var foley_lat = 47.666668;
+		var foley_long = -117.400645;
+		var hemm_lat = 47.667322;
+		var hemm_long = -117.399905;
+		var crosby_lat = 47.667456;
+		var crosby_long = -117.401291;
+		var default_layer = "hot"
+
+
+		// takes in latitude, longitude, and offsets
+		// returns Open Street Maps GUI for
+		function generateUrl(lat, long, lat_offset, long_offset, layer){
+			var url = "https://www.openstreetmap.org/export/embed.html?bbox=";
+			url = url + (long - long_offset) + "%2C" + (lat - lat_offset) + "%2C";
+			url = url + (long + long_offset) + "%2C" + (lat + lat_offset);
+			url = url + "&layer=" + layer + "&marker=" + lat + "%2C" + long;
+			return url;
+		}			
+
+		var layer_selector = document.getElementById("map-layer-selector");
+		layer_selector.addEventListener('change', function() {
+			default_layer=this.value;
+			console.log(default_layer);
+		}, false);
+
+
+
+		window.addEventListener("load", function() {
+			document.getElementById("order-button").addEventListener("click", function(){
+				console.log("clicked");
+				document.getElementById("delivery-status-container").style.display = "block";
+			});
+		
+			// event listener for "Load map" button
+			document.getElementById("map-go-button").addEventListener("click", function(){
+				var user_lat =parseFloat(document.getElementById("lat-enter").value);
+				var user_long = parseFloat(document.getElementById("long-enter").value);
+				var url = generateUrl(user_lat, user_long, default_latitude_offset, default_longitude_offset, default_layer);
+				document.getElementById("openstreetmap").src=url;
+			});
+
+			// event listener for "Go to Herak" button
+			document.getElementById("herak-go-button").addEventListener("click", function(){
+				var url = generateUrl(herak_lat, herak_long, default_latitude_offset, default_longitude_offset, default_layer);
+				console.log("default layer: " + default_layer);
+				console.log("URL: " + url)
+				document.getElementById("openstreetmap").src=url;
+			});
+
+			// event listener for "Go to Foley" button
+			document.getElementById("foley-go-button").addEventListener("click", function(){
+				var url = generateUrl(foley_lat, foley_long, default_latitude_offset, default_longitude_offset, default_layer);
+				document.getElementById("openstreetmap").src=url;
+			});
+			// event listener for "Go to Hemmingson" button
+			document.getElementById("hemm-go-button").addEventListener("click", function(){
+				var url = generateUrl(hemm_lat, hemm_long, default_latitude_offset, default_longitude_offset, default_layer);
+				document.getElementById("openstreetmap").src=url;
+			});
+			// event listener for "Go to Crosby" button
+			document.getElementById("crosby-go-button").addEventListener("click", function(){
+				var url = generateUrl(crosby_lat, crosby_long, default_latitude_offset, default_longitude_offset, default_layer);
+				document.getElementById("openstreetmap").src=url;
+			});
+		});
+	</script>
 {% endblock content %}
