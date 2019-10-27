@@ -24,7 +24,7 @@ section.map{
 }
 
 #delivery-status-container{
-	visibility: hidden;
+	display: none;
 }
 .food-container{
 	grid-template-columns: 1fr 1fr;
