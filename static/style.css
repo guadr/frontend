@@ -51,7 +51,7 @@ section.map{
 .map-input-container{
 	display: grid;
 	grid-row: 1;
-	grid-column: 2;
+	grid-column: 3;
 	border-radius:25px;
 	background-color: lightgray;
 	margin:15px;
@@ -123,58 +123,58 @@ section.map{
 #enter-lat-text{
 	width: 90%;
 	grid-column: 1;
-	grid-row: 4;
+	grid-row: 3;
 }
 
 #enter-long-text{
 	width: 90%;
 	grid-column: 1;
-	grid-row: 5;
+	grid-row: 4;
 }
 
 #lat-enter{
 	grid-column: 2;
-	grid-row: 4;
+	grid-row: 3;
 }
 
 #long-enter{
 	grid-column: 2;
-	grid-row: 5;
+	grid-row: 4;
 }
 
 #map-go-button{
 	width: 80%;
 	grid-column: 1;
-	grid-row: 1;
+	grid-row: 5;
 }
 
 #herak-go-button{
 	width: 80%;
 	grid-column: 2;
-	grid-row: 2;
+	grid-row: 1;
 }
 
 #foley-go-button{
 	width: 80%;
 	grid-column: 1;
-	grid-row: 2;
+	grid-row: 1;
 }
 
 #hemm-go-button{
 	width: 90%;
 	grid-column: 2;
-	grid-row: 3;
+	grid-row: 2;
 }
 
 #crosby-go-button{
 	width: 70%;
 	grid-column: 1;
-	grid-row: 3;
+	grid-row: 2;
 }
 
 #map-layer-selector{
 	grid-column: 2;
-	grid-row: 1;
+	grid-row: 5;
 }
 
 
