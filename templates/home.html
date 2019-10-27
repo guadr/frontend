@@ -21,8 +21,25 @@
 		
 		<div class="location-list">
 			<h3>Delivery Locations</h3>
+			<div class="map-input-container" id="map-input-container-div">
+				<input id="map-go-button" class="map-input-button" type="button" value="Load map">
+				<input id="herak-go-button" class="map-input-button" type="button" value="Go to Herak">
+				<input id="foley-go-button" class="map-input-button" type="button" value="Go to Foley">
+				<input id="hemm-go-button" class="map-input-button" type="button" value="Go to Hemmingson">
+				<input id="crosby-go-button" class="map-input-button" type="button" value="Go to Crosby">
+				<span id="enter-lat-text">Enter latitude: </span>
+				<input id="lat-enter" class="map-coord-input" type="number" value="Enter latitude">
+				<span id="enter-long-text">Enter longitude: </span>
+				<input id="long-enter" class="map-coord-input" type="number" value="Enter longitude">
+				
+				<select name="Map View Options" id="map-layer-selector">
+					<option value="mapnik">Default</option>
+					<option value="hot">Humanitarian</option>
+					<option value="transportmap">Transport</option>
+					<option value="cyclemap">Cycle</option>
+				</select>
+			</div>
 		</div>
-
 		
 		<div id="order-button-div">
 				<input id="order-button" type="button" value="Place Order">
@@ -37,23 +54,6 @@
 	</section>
 		
 	<section class="map">
-			<div class="map-input-container" id="map-input-container-div">
-			<span id="enter-lat-text">Enter latitude: </span>
-			<input id="lat-enter" class="map-coord-input" type="number" value="Enter latitude">
-			<span id="enter-long-text">Enter longitude: </span>
-			<input id="long-enter" class="map-coord-input" type="number" value="Enter longitude">
-			<input id="map-go-button" class="map-input-button" type="button" value="Load map">
-			<input id="herak-go-button" class="map-input-button" type="button" value="Go to Herak">
-			<input id="foley-go-button" class="map-input-button" type="button" value="Go to Foley">
-			<input id="hemm-go-button" class="map-input-button" type="button" value="Go to Hemmingson">
-			<input id="crosby-go-button" class="map-input-button" type="button" value="Go to Crosby">
-			<select name="Map View Options" id="map-layer-selector">
-				<option value="mapnik">Default</option>
-				<option value="hot">Humanitarian</option>
-				<option value="transportmap">Transport</option>
-				<option value="cyclemap">Cycle</option>
-			</select>
-		</div>
 
 				<div class="map-container" id="map-container-div">
 			<iframe width="600" height="400"
@@ -75,16 +75,17 @@
 		var hemm_long = -117.399905;
 		var crosby_lat = 47.667456;
 		var crosby_long = -117.401291;
-		var default_layer = "hot"
+		var default_layer = "hot";
 
 
 		// takes in latitude, longitude, and offsets
 		// returns Open Street Maps GUI for
 		function generateUrl(lat, long, lat_offset, long_offset, layer){
 			var url = "https://www.openstreetmap.org/export/embed.html?bbox=";
-			url = url + (long - long_offset) + "%2C" + (lat - lat_offset) + "%2C";
-			url = url + (long + long_offset) + "%2C" + (lat + lat_offset);
-			url = url + "&layer=" + layer + "&marker=" + lat + "%2C" + long;
+			var delimeter = "%2C";
+			url = url + (long - long_offset) + delimeter + (lat - lat_offset) + delimeter;
+			url = url + (long + long_offset) + delimeter + (lat + lat_offset);
+			url = url + "&layer=" + layer + "&marker=" + lat + delimeter + long;
 			return url;
 		}			
 

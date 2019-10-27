@@ -20,7 +20,15 @@ section.map{
 
 .location-container{
 	display: grid;
+	grid-row: 1;
+	grid-column: 3;
+	border-radius:25px;
+	background-color: lightgray;
+	margin:15px;
+	padding:10px;
+	align-items: center;
 	grid-template-columns: 1fr 1fr;
+	justify-items: center;
 }
 
 #delivery-status-container{
@@ -42,7 +50,7 @@ section.map{
 
 .map-input-container{
 	display: grid;
-	grid-row: 3;
+	grid-row: 1;
 	grid-column: 2;
 	border-radius:25px;
 	background-color: lightgray;
@@ -113,60 +121,60 @@ section.map{
 }
 
 #enter-lat-text{
-	width: 60%;
+	width: 90%;
 	grid-column: 1;
-	grid-row: 1;
+	grid-row: 4;
 }
 
 #enter-long-text{
-	width: 60%;
+	width: 90%;
 	grid-column: 1;
-	grid-row: 2;
+	grid-row: 5;
 }
 
 #lat-enter{
 	grid-column: 2;
-	grid-row: 1;
+	grid-row: 4;
 }
 
 #long-enter{
 	grid-column: 2;
-	grid-row: 2;
+	grid-row: 5;
 }
 
 #map-go-button{
-	width: 25%;
+	width: 80%;
 	grid-column: 1;
-	grid-row: 3;
+	grid-row: 1;
 }
 
 #herak-go-button{
-	width: 25%;
+	width: 80%;
 	grid-column: 2;
-	grid-row: 4;
+	grid-row: 2;
 }
 
 #foley-go-button{
-	width: 25%;
+	width: 80%;
 	grid-column: 1;
-	grid-row: 4;
+	grid-row: 2;
 }
 
 #hemm-go-button{
-	width: 40%;
+	width: 90%;
 	grid-column: 2;
-	grid-row: 5;
+	grid-row: 3;
 }
 
 #crosby-go-button{
-	width: 30%;
+	width: 70%;
 	grid-column: 1;
-	grid-row: 5;
+	grid-row: 3;
 }
 
 #map-layer-selector{
 	grid-column: 2;
-	grid-row: 3;
+	grid-row: 1;
 }
 
 
