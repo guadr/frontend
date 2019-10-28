@@ -38,6 +38,13 @@
 					<option value="transportmap">Transport</option>
 					<option value="cyclemap">Cycle</option>
 				</select>
+				<form action="">
+						<input id="herak-radio" class="location-radio" type="radio" value="Herak" name="location">Herak<br>
+						<input id="foley-radio" class="location-radio" type="radio" value="Foley" name="location">Foley<br>
+						<input id="crosby-radio" class="location-radio" type="radio" value="Crosby" name="location">Crosby<br>
+						<input id="hemm-radio" class="location-radio" type="radio" value="Hemmingson" name="location">Hemmingson<br>
+						<input id="custom-radio" class="location-radio" type="radio" value="Custom" name="location">Custom
+				</form>
 			</div>
 		</div>
 		
@@ -75,7 +82,7 @@
 		var hemm_long = -117.399905;
 		var crosby_lat = 47.667456;
 		var crosby_long = -117.401291;
-		var default_layer = "hot";
+		var default_layer = "mapnik";
 
 
 		// takes in latitude, longitude, and offsets
@@ -95,12 +102,33 @@
 			console.log(default_layer);
 		}, false);
 
-
-
 		window.addEventListener("load", function() {
 			document.getElementById("order-button").addEventListener("click", function(){
 				console.log("clicked");
 				document.getElementById("delivery-status-container").style.display = "block";
+
+				// based on which radio button was checked, update the map to show a marker at the chosen location
+				if(document.getElementById("herak-radio").checked){
+					var url = generateUrl(herak_lat, herak_long, default_latitude_offset, default_longitude_offset, default_layer);
+					document.getElementById("openstreetmap").src=url;
+				} else if(document.getElementById("foley-radio").checked){
+					var url = generateUrl(foley_lat, foley_long, default_latitude_offset, default_longitude_offset, default_layer);
+					document.getElementById("openstreetmap").src=url;
+				} else if(document.getElementById("crosby-radio").checked){
+					var url = generateUrl(crosby_lat, crosby_long, default_latitude_offset, default_longitude_offset, default_layer);
+					document.getElementById("openstreetmap").src=url;
+				} else if(document.getElementById("hemm-radio").checked){
+					var url = generateUrl(hemm_lat, hemm_long, default_latitude_offset, default_longitude_offset, default_layer);
+					document.getElementById("openstreetmap").src=url;
+				} else if(document.getElementById("custom-radio").checked){
+					var user_lat =parseFloat(document.getElementById("lat-enter").value);
+					var user_long = parseFloat(document.getElementById("long-enter").value);
+					var url = generateUrl(user_lat, user_long, default_latitude_offset, default_longitude_offset, default_layer);
+					document.getElementById("openstreetmap").src=url;
+				} else {
+					console.log("No location selected");
+				}
+				
 			});
 		
 			// event listener for "Load map" button
