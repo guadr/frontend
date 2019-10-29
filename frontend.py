@@ -20,7 +20,7 @@ longitudes_list = [longitude_robot, longitude_destination]
 
 
 
-@app.route("/")
+@app.route("/", methods=['GET','POST'])
 def hello():
     return render_template("home.html", title="GUADR Mockup" , foods=food_items, locations=delivery_locations, cur_per=current_percentage, rem_time=remaining_time, loc_url=location_url)
 
