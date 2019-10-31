@@ -139,7 +139,7 @@
 					var xhr = new XMLHttpRequest();
 					xhr.open('POST', '/location/api/delivery/delivery_location');
 					xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-					xhr.send(JSON.stringify({"lat": "4", "long": "5"}));
+					xhr.send(JSON.stringify({"lat": delivery_lat, "long": delivery_long}));
 				}
 			});
 		
