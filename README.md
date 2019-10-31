@@ -12,3 +12,6 @@ pip install -r requirements.txt
 ```
 virtualenv .env && source .env/bin/activate && pip install -r requirements.txt
 ```
+
+### API
+For our implementation of the API we are storing our location in a memory structure. In a move to a production environment we will need to attach to a database. 

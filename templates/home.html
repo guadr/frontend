@@ -83,6 +83,31 @@
 		var delivery_long = 0;
 		var delivery_dictionary = {}
 
+		//load every 5 seconds
+		var mapLoadInterval = setInterval(updateBotLocation, 5000); //5 seconds
+
+		//define variables to see if the position of the bot has moved
+		var lastLat = 47.666867;
+		var lastLong = -117.4017010;
+		
+		function updateMap(){
+			//if the bot has moved, reload the page
+			if( (this.response[0] !== lastLat) || (this.response[1] !== lastLong) ){
+				var url = generateUrl(this.response[0], this.response[1], default_latitude_offset, default_longitude_offset, default_layer);
+                        	document.getElementById("openstreetmap").src=url;
+				lastLat = this.response[0];
+				lastLong = this.response[1];
+			}
+		}
+
+		function updateBotLocation(){
+			var xhr = new XMLHttpRequest(); //create xml request
+			xhr.addEventListener("load", updateMap); //call function on load
+			xhr.responseType = "json";
+			xhr.open("GET", "/location/api/delivery/robot_location", true);
+			xhr.send();
+		}
+	
 
 		// takes in latitude, longitude, and offsets
 		// returns Open Street Maps GUI for
@@ -98,7 +123,6 @@
 		var layer_selector = document.getElementById("map-layer-selector");
 		layer_selector.addEventListener('change', function() {
 			default_layer=this.value;
-			console.log(default_layer);
 		}, false);
 
 
@@ -111,6 +135,11 @@
 					delivery_dictionary.latitude = delivery_lat;
 					delivery_dictionary.longitude = delivery_long;
 					document.getElementById("delivery-status-container").style.display = "block";
+
+					var xhr = new XMLHttpRequest();
+					xhr.open('POST', '/location/api/delivery/delivery_location');
+					xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+					xhr.send(JSON.stringify({"lat": "4", "long": "5"}));
 				}
 			});
 		

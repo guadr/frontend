@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for
+from flask import Flask, render_template, url_for, jsonify, request, abort
 app = Flask(__name__)
 
 current_percentage = 30
@@ -18,12 +18,41 @@ delivery_locations = ["Foley Library", "Hemmingson NW Corner", "Herak NE Corner"
 latitudes_list = [latitude_robot, latitude_destination]
 longitudes_list = [longitude_robot, longitude_destination]
 
+#For API
+delivery = {
+        'Delivery_Location': [47.666867, -117.4017010], 
+        'Robot_Location': [47.666867, -117.4017010]
+        }
 
 
 @app.route("/")
 def hello():
     return render_template("home.html", title="GUADR Mockup" , foods=food_items, locations=delivery_locations, cur_per=current_percentage, rem_time=remaining_time, loc_url=location_url)
 
+##############
+#   API      #
+##############
+@app.route('/location/api/delivery/robot_location', methods=['GET', 'POST'])
+def get_robot_location():
+    if request.method == "GET":
+        return jsonify(delivery['Robot_Location'])
+    elif request.method == "POST":
+        delivery['Robot_Location'] = [float(request.form['lat']),float(request.form['long'])] 
+        return jsonify({'Updated_Robot_Location': delivery['Robot_Location']}), 201
+    else:
+        abort(404)
+
+
+@app.route('/location/api/delivery/delivery_location', methods=['GET', 'POST'])
+def get_delivery_location():
+    if request.method == "GET":
+        return jsonify(delivery['Delivery_Location'])
+    elif request.method == "POST":
+        delivery['Delivery_Location'] = [float(request.form['lat']),float(request.form['long'])] 
+        return jsonify({'Updated_Delivery_Location': delivery['Delivery_Location']}), 201
+
+    else:
+        abort(404)
 
 
 if __name__ == "__main__":
