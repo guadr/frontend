@@ -5,23 +5,40 @@
 	Flask quickstart: http://flask.palletsprojects.com/en/1.1.x/quickstart/#quickstart
 -->
 {% block content %}
-	<h1 id="main-title"><strong>Place Your Order</strong></h1>
+	<h1 id="main-title"><strong>GUADR Delivery Bot</strong></h1>
 	<section class="main-page">
 		<div class="food-list">
 			<h3>Food Items</h3>
 			<div class="food-container">
 				{% for food in foods %}
 					<div>
-						<input type="radio" name="food" value={{food}}>{{food}}<br>
+						<input type="checkbox" name="food" value={{food}}>{{food}}<br>
 					</div>
 				{% endfor %}
 			</div>
 		</div>
 		
 		<div class="location-list">
-			<h3>Delivery Locations</h3>
+			<h3>Pick a Delivery Location, or Choose Your Own!</h3>
+			<div class="map-input-container" id="map-input-container-div">
+				<input id="map-go-button" class="map-input-button" type="button" value="Load Specified location">
+				<input id="herak-go-button" class="map-input-button" type="button" value="Herak">
+				<input id="foley-go-button" class="map-input-button" type="button" value="Foley">
+				<input id="hemm-go-button" class="map-input-button" type="button" value="Hemmingson">
+				<input id="crosby-go-button" class="map-input-button" type="button" value="Crosby">
+				<span id="enter-lat-text">Enter latitude: </span>
+				<input id="lat-enter" class="map-coord-input" type="number" value="Enter latitude">
+				<span id="enter-long-text">Enter longitude: </span>
+				<input id="long-enter" class="map-coord-input" type="number" value="Enter longitude">
+				
+				<select name="Map View Options" id="map-layer-selector">
+					<option value="mapnik">Default</option>
+					<option value="hot">Humanitarian</option>
+					<option value="transportmap">Transport</option>
+					<option value="cyclemap">Cycle</option>
+				</select>
+			</div>
 		</div>
-
 		
 		<div id="order-button-div">
 				<input id="order-button" type="button" value="Place Order">
@@ -36,23 +53,6 @@
 	</section>
 		
 	<section class="map">
-			<div class="map-input-container" id="map-input-container-div">
-			<span id="enter-lat-text">Enter latitude: </span>
-			<input id="lat-enter" class="map-coord-input" type="number" value="Enter latitude">
-			<span id="enter-long-text">Enter longitude: </span>
-			<input id="long-enter" class="map-coord-input" type="number" value="Enter longitude">
-			<input id="map-go-button" class="map-input-button" type="button" value="Load map">
-			<input id="herak-go-button" class="map-input-button" type="button" value="Go to Herak">
-			<input id="foley-go-button" class="map-input-button" type="button" value="Go to Foley">
-			<input id="hemm-go-button" class="map-input-button" type="button" value="Go to Hemmingson">
-			<input id="crosby-go-button" class="map-input-button" type="button" value="Go to Crosby">
-			<select name="Map View Options" id="map-layer-selector">
-				<option value="mapnik">Default</option>
-				<option value="hot">Humanitarian</option>
-				<option value="transportmap">Transport</option>
-				<option value="cyclemap">Cycle</option>
-			</select>
-		</div>
 
 				<div class="map-container" id="map-container-div">
 			<iframe width="600" height="400"
@@ -63,7 +63,8 @@
 			</iframe>
 		</div>
 	</section>
-	<script>
+	<script type="text/javascript" charset="utf-8">
+		
 		var default_latitude_offset = 0.000633;
 		var default_longitude_offset = 0.000755;
 		var herak_lat = 47.666859;
@@ -74,63 +75,122 @@
 		var hemm_long = -117.399905;
 		var crosby_lat = 47.667456;
 		var crosby_long = -117.401291;
-		var default_layer = "hot"
+		var default_layer = "mapnik";
+		var chosen_Location = "";
+		var user_lat = 0;
+		var user_long = 0;
+		var delivery_lat = 0;
+		var delivery_long = 0;
+		var delivery_dictionary = {}
 
+		//load every 5 seconds
+		var mapLoadInterval = setInterval(updateBotLocation, 5000); //5 seconds
+
+		//define variables to see if the position of the bot has moved
+		var lastLat = 47.666867;
+		var lastLong = -117.4017010;
+		
+		function updateMap(){
+			//if the bot has moved, reload the page
+			if( (this.response[0] !== lastLat) || (this.response[1] !== lastLong) ){
+				var url = generateUrl(this.response[0], this.response[1], default_latitude_offset, default_longitude_offset, default_layer);
+                        	document.getElementById("openstreetmap").src=url;
+				lastLat = this.response[0];
+				lastLong = this.response[1];
+			}
+		}
+
+		function updateBotLocation(){
+			var xhr = new XMLHttpRequest(); //create xml request
+			xhr.addEventListener("load", updateMap); //call function on load
+			xhr.responseType = "json";
+			xhr.open("GET", "/location/api/delivery/robot_location", true);
+			xhr.send();
+		}
+	
 
 		// takes in latitude, longitude, and offsets
 		// returns Open Street Maps GUI for
 		function generateUrl(lat, long, lat_offset, long_offset, layer){
 			var url = "https://www.openstreetmap.org/export/embed.html?bbox=";
-			url = url + (long - long_offset) + "%2C" + (lat - lat_offset) + "%2C";
-			url = url + (long + long_offset) + "%2C" + (lat + lat_offset);
-			url = url + "&layer=" + layer + "&marker=" + lat + "%2C" + long;
+			var delimeter = "%2C";
+			url = url + (long - long_offset) + delimeter + (lat - lat_offset) + delimeter;
+			url = url + (long + long_offset) + delimeter + (lat + lat_offset);
+			url = url + "&layer=" + layer + "&marker=" + lat + delimeter + long;
 			return url;
 		}			
 
 		var layer_selector = document.getElementById("map-layer-selector");
 		layer_selector.addEventListener('change', function() {
 			default_layer=this.value;
-			console.log(default_layer);
 		}, false);
-
 
 
 		window.addEventListener("load", function() {
 			document.getElementById("order-button").addEventListener("click", function(){
-				console.log("clicked");
-				document.getElementById("delivery-status-container").style.display = "block";
+				if(chosen_Location === ""){
+					alert("You have not chosen a delivery location. If you have chosen a user specified location, please press 'load specified location'")	
+				}
+				else{
+					delivery_dictionary.latitude = delivery_lat;
+					delivery_dictionary.longitude = delivery_long;
+					document.getElementById("delivery-status-container").style.display = "block";
+
+					/* TODO
+					var xhr = new XMLHttpRequest();
+					xhr.open('POST', '/location/api/delivery/delivery_location');
+					xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+					xhr.send(JSON.stringify({"lat": delivery_lat, "long": delivery_long}));
+					*/
+				}
 			});
 		
 			// event listener for "Load map" button
 			document.getElementById("map-go-button").addEventListener("click", function(){
-				var user_lat =parseFloat(document.getElementById("lat-enter").value);
-				var user_long = parseFloat(document.getElementById("long-enter").value);
+				user_lat = parseFloat(document.getElementById("lat-enter").value);
+				user_long = parseFloat(document.getElementById("long-enter").value);
 				var url = generateUrl(user_lat, user_long, default_latitude_offset, default_longitude_offset, default_layer);
 				document.getElementById("openstreetmap").src=url;
+				chosen_Location = "custom";
+				delivery_lat = user_lat;
+				delivery_long = user_long;
 			});
 
-			// event listener for "Go to Herak" button
+			// event listener for "Herak" button
 			document.getElementById("herak-go-button").addEventListener("click", function(){
 				var url = generateUrl(herak_lat, herak_long, default_latitude_offset, default_longitude_offset, default_layer);
-				console.log("default layer: " + default_layer);
-				console.log("URL: " + url)
 				document.getElementById("openstreetmap").src=url;
+				chosen_Location = "herak";
+				delivery_lat = herak_lat;
+				delivery_long = herak_long;
+
 			});
 
-			// event listener for "Go to Foley" button
+			// event listener for "Foley" button
 			document.getElementById("foley-go-button").addEventListener("click", function(){
 				var url = generateUrl(foley_lat, foley_long, default_latitude_offset, default_longitude_offset, default_layer);
 				document.getElementById("openstreetmap").src=url;
+				chosen_Location = "foley";
+				delivery_lat = foley_lat;
+				delivery_long = foley_long;
+
 			});
-			// event listener for "Go to Hemmingson" button
+			// event listener for "Hemmingson" button
 			document.getElementById("hemm-go-button").addEventListener("click", function(){
 				var url = generateUrl(hemm_lat, hemm_long, default_latitude_offset, default_longitude_offset, default_layer);
 				document.getElementById("openstreetmap").src=url;
+				chosen_Location = "hemmingson";
+				delivery_lat = hemm_lat;
+				delivery_long = hemm_long;
 			});
-			// event listener for "Go to Crosby" button
+			// event listener for "Crosby" button
 			document.getElementById("crosby-go-button").addEventListener("click", function(){
 				var url = generateUrl(crosby_lat, crosby_long, default_latitude_offset, default_longitude_offset, default_layer);
 				document.getElementById("openstreetmap").src=url;
+				chosen_Location = "crosby";
+				delivery_lat = crosby_lat;
+				delivery_long = crosby_long;
+
 			});
 		});
 	</script>
