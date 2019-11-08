@@ -92,11 +92,11 @@
 		
 		function updateMap(){
 			//if the bot has moved, reload the page
-			if( (this.response[0] !== lastLat) || (this.response[1] !== lastLong) ){
-				var url = generateUrl(this.response[0], this.response[1], default_latitude_offset, default_longitude_offset, default_layer);
+			if( (this.response[0]["latitude"] !== lastLat) || (this.response[0]["longitude"]!== lastLong) ){
+				var url = generateUrl(this.response[0]["latitude"], this.response[0]["longitude"], default_latitude_offset, default_longitude_offset, default_layer);
                         	document.getElementById("openstreetmap").src=url;
-				lastLat = this.response[0];
-				lastLong = this.response[1];
+				lastLat = this.response[0]["latitude"];
+				lastLong = this.response[0]["longitude"];
 			}
 		}
 
@@ -136,12 +136,13 @@
 					delivery_dictionary.longitude = delivery_long;
 					document.getElementById("delivery-status-container").style.display = "block";
 
-					/* TODO
+					
 					var xhr = new XMLHttpRequest();
+					var data = new FormData();
+					data.append("latitude",delivery_lat);
+					data.append("longitude",delivery_long);
 					xhr.open('POST', '/location/api/delivery/delivery_location');
-					xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-					xhr.send(JSON.stringify({"lat": delivery_lat, "long": delivery_long}));
-					*/
+					xhr.send(data);
 				}
 			});
 		
