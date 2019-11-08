@@ -38,10 +38,10 @@ def get_robot_location():
         If GET, get the latitude and longitude
         of the latest robot location 
         '''
-        loc = query_db('select latitude, longitude \
-                        from robot_location \
-                        where time = (select MAX(time) \
-                                             from robot_location)')
+        loc = query_db('''select latitude, longitude 
+                        from robot_location 
+                        where time = (select MAX(time) 
+                                             from robot_location)''')
         return jsonify(loc)
     elif request.method == "POST":
         '''
@@ -70,10 +70,10 @@ def get_delivery_location():
         If GET: get the latest
         long and lat to respond
         '''
-        loc = query_db('select latitude, longitude \
-                        from delivery_location \
-                        where delivery_id = (select MAX(delivery_id) \
-                                                   from delivery_location)')
+        loc = query_db('''select latitude, longitude 
+                        from delivery_location 
+                        where delivery_id = (select MAX(delivery_id) 
+                                                   from delivery_location)''')
         return jsonify(loc)
 
     elif request.method == "POST":
