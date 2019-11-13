@@ -3,15 +3,11 @@ import json
 import pytest
 import frontend
 from frontend import app
+
 '''
 Test GET and POST functionality
 for both endpoints
 '''
-
-'''TODO
-change from 0.0.0.0 to guadr.com
-'''
-
 def test_delivery_POST():
     x = requests.post('http://guadr.com/location/api/delivery/delivery_location', data={"latitude": 9, "longitude": 8})
     json_request = json.loads(x.content)
@@ -32,7 +28,9 @@ def test_robot_GET():
     json_request = json.loads(x.content)
     assert (isinstance(json_request[0]['latitude'], float) and ( isinstance(json_request[0]['longitude'], float))) 
 
-
+'''
+Test DB 
+'''
 def test_DB():
     with app.app_context():
         frontend.init_db()
