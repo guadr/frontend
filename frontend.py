@@ -2,10 +2,18 @@ import sqlite3
 import datetime
 from flask import Flask, render_template, url_for, jsonify, request, abort, g
 import pytest
+from flask_httpauth import HTTPBasicAuth
+from werkzeug.security import check_password_hash
+
+
+'''
+authorization using https://github.com/miguelgrinberg/Flask-HTTPAuth
+'''
 
 
 DATABASE = '../instance/GUADR.db' 
 app = Flask(__name__)
+auth = HTTPBasicAuth()
 
 #Set Variables
 current_percentage = 30
@@ -24,8 +32,17 @@ delivery_locations = ["Foley Library", "Hemmingson NW Corner", "Herak NE Corner"
 latitudes_list = [latitude_robot, latitude_destination]
 longitudes_list = [longitude_robot, longitude_destination]
 
+@auth.verify_password
+def verify_password(username, password):
+    base_user = query_db('select * from users', one=True)
+    if username == base_user['username'] and check_password_hash(base_user['password'],password):
+        return True
+    return False
+
+
 #Home Route
 @app.route("/")
+@auth.login_required
 def hello():
     return render_template("home.html", title="GUADR Mockup" , foods=food_items, locations=delivery_locations, cur_per=current_percentage, rem_time=remaining_time, loc_url=location_url)
 
