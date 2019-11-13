@@ -1,6 +1,7 @@
 import sqlite3
 import datetime
 from flask import Flask, render_template, url_for, jsonify, request, abort, g
+import pytest
 
 
 DATABASE = '../instance/GUADR.db' 
@@ -55,7 +56,6 @@ def get_robot_location():
         }]
 
         max_del = query_db('SELECT max(delivery_id) as id FROM delivery_location', one=True)
-        print(max_del['id'])
 
         insert_into_db('INSERT INTO robot_location (del_id, time, latitude, longitude) VALUES (?,?,?,?)', (max_del['id'], datetime.datetime.now(), float(request.form['latitude']), float(request.form['longitude'])))
         return jsonify(robot_loc), 201
