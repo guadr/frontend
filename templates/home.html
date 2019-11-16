@@ -12,7 +12,7 @@
 			<div class="food-container">
 				{% for food in foods %}
 					<div>
-						<input type="checkbox" name="food" value={{food}}>{{food}}<br>
+						<input class="food-items" type="checkbox" name="food" value={{food}}>{{food}}<br>
 					</div>
 				{% endfor %}
 			</div>
@@ -46,9 +46,9 @@
 		<div class="container" id="delivery-status-container">
 			<h2>How close is your delivery?</h2>
 				<div class="progress"> 
-					<div class="progress-bar" role="progressbar" aria-valuenow="{{cur_per}}" aria-valuemin="0" aria-valuemax="100" style="width: {{cur_per}}%"> {{cur_per}}% </div> 
+					<div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"> 0% </div> 
 				</div> 
-				<p><strong>Time remaining: </strong>{{rem_time}}</p>;
+				<p id="status"><strong>Status:</strong> Processing</p>;
 		</div>
 	</section>
 		
@@ -77,11 +77,13 @@
 		var crosby_long = -117.401291;
 		var default_layer = "mapnik";
 		var chosen_Location = "";
+		var chosen_items = [];
 		var user_lat = 0;
 		var user_long = 0;
 		var delivery_lat = 0;
 		var delivery_long = 0;
 		var delivery_dictionary = {}
+		var ordered = false;
 
 		//load every 5 seconds
 		var mapLoadInterval = setInterval(updateBotLocation, 5000); //5 seconds
@@ -89,8 +91,9 @@
 		//define variables to see if the position of the bot has moved
 		var lastLat = 47.666867;
 		var lastLong = -117.4017010;
+		var lastPercLocation = 0.0;
 		
-		function updateMap(){
+		function updateMapAndStatus(){
 			//if the bot has moved, reload the page
 			if( (this.response[0]["latitude"] !== lastLat) || (this.response[0]["longitude"]!== lastLong) ){
 				var url = generateUrl(this.response[0]["latitude"], this.response[0]["longitude"], default_latitude_offset, default_longitude_offset, default_layer);
@@ -98,17 +101,30 @@
 				lastLat = this.response[0]["latitude"];
 				lastLong = this.response[0]["longitude"];
 			}
+			if((this.response[0]["perc_complete"] !== lastPercLocation)){
+				prog_bar = document.getElementsByClassName("progress-bar")[0];
+				//prog_bar.aria-valuenow = this.response[0]["perc_complete"]; 
+				prog_bar.style.width = this.response[0]["perc_complete"] + "%";
+				prog_bar.innerHTML = this.response[0]["perc_complete"];
+				
+				status_update = document.getElementById("status");
+				if (this.response[0]["perc_complete"] > 0 && this.response[0]["perc_complete"] < 100){
+					status_update.innerHTML = "In Transit";
+				}
+				else if (this.response[0]["perc_complete"] == 100){
+					status_update.innerHTML = "Ready For Pickup";
+				}	
+			}
 		}
 
 		function updateBotLocation(){
 			var xhr = new XMLHttpRequest(); //create xml request
-			xhr.addEventListener("load", updateMap); //call function on load
+			xhr.addEventListener("load", updateMapAndStatus); //call function on load
 			xhr.responseType = "json";
 			xhr.open("GET", "/location/api/delivery/robot_location", true);
 			xhr.send();
 		}
 	
-
 		// takes in latitude, longitude, and offsets
 		// returns Open Street Maps GUI for
 		function generateUrl(lat, long, lat_offset, long_offset, layer){
@@ -128,23 +144,44 @@
 
 		window.addEventListener("load", function() {
 			document.getElementById("order-button").addEventListener("click", function(){
-				if(chosen_Location === ""){
-					alert("You have not chosen a delivery location. If you have chosen a user specified location, please press 'load specified location'")	
-				}
-				else{
-					delivery_dictionary.latitude = delivery_lat;
-					delivery_dictionary.longitude = delivery_long;
-					document.getElementById("delivery-status-container").style.display = "block";
+				//check if the order has been placed
+				//since we are only doing one
+				if (!ordered){
+					//check for chosen items
+					items = document.getElementsByClassName("food-items");
+					for(var i = 0; i< items.length; i++){
+						if(items[i].checked == true){
+							chosen_items.push(items[0]);
+						}
+					}
 
 					
-					var xhr = new XMLHttpRequest();
-					var data = new FormData();
-					data.append("latitude",delivery_lat);
-					data.append("longitude",delivery_long);
-					xhr.open('POST', '/location/api/delivery/delivery_location');
-					xhr.send(data);
+					if(chosen_Location === ""){
+						alert("You have not chosen a delivery location. If you have chosen a user specified location, please press 'load specified location'")	
+					}else if (chosen_items.length == 0){
+						alert("You have not chosen a food item(s)'")	
+					}else{
+						delivery_dictionary.latitude = delivery_lat;
+						delivery_dictionary.longitude = delivery_long;
+						document.getElementById("delivery-status-container").style.display = "block";
+
+						
+						var xhr = new XMLHttpRequest();
+						var data = new FormData();
+						data.append("latitude",delivery_lat);
+						data.append("longitude",delivery_long);
+						xhr.open('POST', '/location/api/delivery/delivery_location');
+						xhr.send(data);
+						ordered = true;
+					}
+				}
+				else
+				{
+					alert("Order has already been placed")	
+
 				}
 			});
+			
 		
 			// event listener for "Load map" button
 			document.getElementById("map-go-button").addEventListener("click", function(){

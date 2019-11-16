@@ -16,8 +16,8 @@ app = Flask(__name__)
 auth = HTTPBasicAuth()
 
 # Set Variables
-current_percentage = 30
-remaining_time = 100
+current_percentage = 0.0
+remaining_time = 0 
 latitude_robot = 47.667560
 longitude_robot = -117.401629
 latitude_destination = 47.666867
@@ -90,7 +90,7 @@ def get_robot_location():
         of the latest robot location 
         """
         loc = query_db(
-            """select latitude, longitude  
+            """select latitude, longitude, perc_complete 
                            from robot_location 
                            where time = (select MAX(time)  
                                          from robot_location) """
@@ -108,6 +108,7 @@ def get_robot_location():
             {
                 "latitude": float(request.form["latitude"]),
                 "longitude": float(request.form["longitude"]),
+                "perc_complete": float(request.form["perc_complete"])
             }
         ]
 
@@ -116,12 +117,13 @@ def get_robot_location():
         )
 
         insert_into_db(
-            "INSERT INTO robot_location (del_id, time, latitude, longitude) VALUES (?,?,?,?)",
+            "INSERT INTO robot_location (del_id, time, latitude, longitude, perc_complete) VALUES (?,?,?,?,?)",
             (
                 max_del["id"],
                 datetime.datetime.now(),
                 float(request.form["latitude"]),
                 float(request.form["longitude"]),
+                float(request.form["perc_complete"])
             ),
         )
         return jsonify(robot_loc), 201
@@ -237,5 +239,4 @@ def init_db():
 
 
 if __name__ == "__main__":
-    init_db()
     app.run(host="0.0.0.0")
