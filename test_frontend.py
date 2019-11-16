@@ -16,27 +16,27 @@ def test_APIs(u, p):
     session.auth = (u, p)
 
     x = session.post(
-        "http://0.0.0.0:5000/location/api/delivery/delivery_location",
+        "https://guadr.com/location/api/delivery/delivery_location",
         data={"latitude": 9, "longitude": 8},
     )
     json_request = json.loads(x.content)
     assert isinstance(json_request[0]["latitude"], float)
     assert isinstance(json_request[0]["longitude"], float)
 
-    x = session.get("http://0.0.0.0:5000/location/api/delivery/delivery_location")
+    x = session.get("https://guadr.com/location/api/delivery/delivery_location")
     json_request = json.loads(x.content)
     assert isinstance(json_request[0]["latitude"], float)
     assert isinstance(json_request[0]["longitude"], float)
 
     x = session.post(
-        "http://0.0.0.0:5000/location/api/delivery/robot_location",
+        "https://guadr.com/location/api/delivery/robot_location",
         data={"latitude": 9, "longitude": 8},
     )
     json_request = json.loads(x.content)
     assert isinstance(json_request[0]["latitude"], float)
     assert isinstance(json_request[0]["longitude"], float)
 
-    x = session.get("http://0.0.0.0:5000/location/api/delivery/robot_location")
+    x = session.get("https://guadr.com/location/api/delivery/robot_location")
     json_request = json.loads(x.content)
     assert isinstance(json_request[0]["latitude"], float)
     assert isinstance(json_request[0]["longitude"], float)
