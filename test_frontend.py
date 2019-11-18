@@ -9,14 +9,12 @@ import sys
 Test GET and POST functionality
 for both endpoints
 """
-
-
 def test_APIs(u, p):
     session = requests.Session()
     session.auth = (u, p)
 
     x = session.post(
-        "https://guadr.com/location/api/delivery/delivery_location",
+        "https://guadr.com/location/api/delivery/robot_location",
         data={"latitude": 9, "longitude": 8},
     )
     json_request = json.loads(x.content)
@@ -47,8 +45,6 @@ def test_APIs(u, p):
 """
 Test DB 
 """
-
-
 def test_DB():
     with app.app_context():
         frontend.init_db()

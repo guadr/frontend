@@ -9,8 +9,6 @@ from werkzeug.security import check_password_hash
 """
 authorization using https://github.com/miguelgrinberg/Flask-HTTPAuth
 """
-
-
 DATABASE = "../instance/GUADR.db"
 app = Flask(__name__)
 auth = HTTPBasicAuth()
