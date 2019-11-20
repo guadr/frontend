@@ -166,6 +166,23 @@ def get_delivery_location():
     else:
         abort(404)
 
+@app.route("/location/api/delivery/route", methods=["GET"])
+@auth.login_required
+def route():
+    if request.method == "GET":
+        """
+        If Get: reply the route
+        """
+        route = []
+        with open("paths/SW-Hem_Herak.txt") as pathfile:
+            for line in pathfile:
+                x = (line.strip("\n"))
+                coordinate = tuple(x.split(','))
+                route.append(coordinate)
+        return jsonify(route),201
+    else:
+        abort(404)
+
 
 """
 Database: Code adopted from https://flask.palletsprojects.com/en/1.1.x/patterns/sqlite3/
