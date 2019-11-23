@@ -18,6 +18,7 @@ section.map{
 	grid-template-columns: 1fr 1fr 1fr;
 }
 
+
 .location-container{
 	display: grid;
 	grid-row: 1;
@@ -35,8 +36,10 @@ section.map{
 	display: none;
 }
 .food-container{
-	grid-template-columns: 1fr 1fr;
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
 }
+
 .map-container{
 	display: grid;
 	grid-row: 4;
@@ -45,8 +48,8 @@ section.map{
 	background-color: lightgray;
 	margin:15px;
 	padding:10px;
-	
 }
+
 
 .map-input-container{
 	display: grid;
@@ -60,6 +63,7 @@ section.map{
 	grid-template-columns: 1fr 1fr;
 	justify-items: center;
 }
+
 
 
 
@@ -91,7 +95,7 @@ section.map{
 	text-align: center;
 }
 
-.food-list h3, .location-list h3{
+.food-list h3, .location-list h3, #order-button-div h3{
 	margin-top: 2px;
 	text-align: center;
 	text-decoration: underline;
@@ -116,37 +120,6 @@ section.map{
 	margin: 2px;
 }
 
-.map-coord-input{
-	margin: 2px;
-}
-
-#enter-lat-text{
-	width: 90%;
-	grid-column: 1;
-	grid-row: 3;
-}
-
-#enter-long-text{
-	width: 90%;
-	grid-column: 1;
-	grid-row: 4;
-}
-
-#lat-enter{
-	grid-column: 2;
-	grid-row: 3;
-}
-
-#long-enter{
-	grid-column: 2;
-	grid-row: 4;
-}
-
-#map-go-button{
-	width: 80%;
-	grid-column: 1;
-	grid-row: 5;
-}
 
 #herak-go-button{
 	width: 80%;
@@ -172,10 +145,8 @@ section.map{
 	grid-row: 2;
 }
 
-#map-layer-selector{
-	grid-column: 2;
-	grid-row: 5;
-}
+
+
 
 
 
