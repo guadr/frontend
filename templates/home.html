@@ -287,6 +287,7 @@
 
 						//update every 5 seconds once an order has been placed
 						var mapLoadInterval = setInterval(updateBotLocation, 5000); //5 seconds
+						updateOSM(last_lat, last_long, delivery_lat, delivery_long);
 					}
 				}
 				else
