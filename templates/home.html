@@ -86,8 +86,6 @@
 		var delivery_dictionary = {}
 		var ordered = false;
 
-		//load every 5 seconds
-		var mapLoadInterval = setInterval(updateBotLocation, 5000); //5 seconds
 
 		//define variables to see if the position of the bot has moved
 		var lastLat = 47.666867;
@@ -286,6 +284,9 @@
 						xhr.open('POST', '/location/api/delivery/delivery_location');
 						xhr.send(data);
 						ordered = true;
+
+						//update every 5 seconds once an order has been placed
+						var mapLoadInterval = setInterval(updateBotLocation, 5000); //5 seconds
 					}
 				}
 				else
