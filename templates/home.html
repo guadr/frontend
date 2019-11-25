@@ -287,7 +287,7 @@
 
 						//update every 5 seconds once an order has been placed
 						var mapLoadInterval = setInterval(updateBotLocation, 5000); //5 seconds
-						updateOSM(last_lat, last_long, delivery_lat, delivery_long);
+						updateOSM(lastLat, lastLong, delivery_lat, delivery_long);
 					}
 				}
 				else
@@ -300,39 +300,36 @@
 
 			// event listener for "Herak" button
 			document.getElementById("herak-go-button").addEventListener("click", function(){
-				//var url = generateUrl(herak_lat, herak_long, default_latitude_offset, default_longitude_offset, default_layer);
-				//document.getElementById("openstreetmap").src=url;
 				chosen_Location = "herak";
 				delivery_lat = herak_lat;
 				delivery_long = herak_long;
-
+				updateOSM(lastLat, lastLong, delivery_lat, delivery_long);
 			});
 
 			// event listener for "Foley" button
 			document.getElementById("foley-go-button").addEventListener("click", function(){
-				//var url = generateUrl(foley_lat, foley_long, default_latitude_offset, default_longitude_offset, default_layer);
-				//document.getElementById("openstreetmap").src=url;
+				
 				chosen_Location = "foley";
 				delivery_lat = foley_lat;
 				delivery_long = foley_long;
+				updateOSM(lastLat, lastLong, delivery_lat, delivery_long);
 
 			});
 			// event listener for "Hemmingson" button
 			document.getElementById("hemm-go-button").addEventListener("click", function(){
-				//var url = generateUrl(hemm_lat, hemm_long, default_latitude_offset, default_longitude_offset, default_layer);
-				//document.getElementById("openstreetmap").src=url;
+				
 				chosen_Location = "hemmingson";
 				delivery_lat = hemm_lat;
 				delivery_long = hemm_long;
+				updateOSM(lastLat, lastLong, delivery_lat, delivery_long);
 			});
 			// event listener for "Crosby" button
 			document.getElementById("crosby-go-button").addEventListener("click", function(){
-				//var url = generateUrl(crosby_lat, crosby_long, default_latitude_offset, default_longitude_offset, default_layer);
-				//document.getElementById("openstreetmap").src=url;
+				
 				chosen_Location = "crosby";
 				delivery_lat = crosby_lat;
 				delivery_long = crosby_long;
-
+				updateOSM(lastLat, lastLong, delivery_lat, delivery_long);
 			});
 		});
 
