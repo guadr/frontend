@@ -40,7 +40,7 @@ location_url = (
     + "%2C"
     + (str(longitude_destination))
 )
-food_items = ["Sandwich", "Soda", "Candy", "Trail Mix", "Beef Jerky", "Muffin"]
+food_items = ["Sandwich", "Soda", "Candy", "Trail Mix", "Beef Jerky", "Muffin", "La Croix", "Bang Energy Drink", "Redbull 16oz", "Eggs", "Bacon", "Pancakes"]
 delivery_locations = [
     "Foley Library",
     "Hemmingson NW Corner",
