@@ -1,9 +1,10 @@
 import sqlite3
 import datetime
-from flask import Flask, render_template, url_for, jsonify, request, abort, g
+from flask import Flask, render_template, url_for, jsonify, request, abort, g, redirect, flash
 import pytest
 from flask_httpauth import HTTPBasicAuth
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash,generate_password_hash
+from flask_login import LoginManager
 
 
 """
@@ -12,6 +13,13 @@ authorization using https://github.com/miguelgrinberg/Flask-HTTPAuth
 DATABASE = "../instance/GUADR.db"
 app = Flask(__name__)
 auth = HTTPBasicAuth()
+
+#login_manager = LoginManager()
+#login_manager.init_app(app)
+
+#set the secret key
+#####REMOVE BEFORE PUSh#
+app.secret_key='lookatallthosechickens'
 
 # Set Variables
 current_percentage = 0.0
@@ -60,9 +68,51 @@ def verify_password(username, password):
         return True
     return False
 
+@app.route("/")
+def base():
+    return redirect(url_for('login'))
+
+#signup
+@app.route("/signup", methods=['GET','POST'])
+def signup():
+    username = request.form.get('UserN')
+    password = request.form.get('UserP')
+
+    #check to see if the user exists in the system,
+    #if user exists
+        #render signup
+    #else 
+        #create new user
+        #add new user to db
+        #redirect to login
+
+    all_users = query_db("select * from users")
+    username_taken = False
+    for x in all_users:
+        if username == x['username']:
+            username_taken = True
+
+    print(username_taken)
+    
+    if username_taken:
+        flash("Username is taken")
+        return render_template("signup.html")
+    elif username is None or password is None:
+        flash("You must enter a username and password")
+        return render_template("signup.html")
+    else:
+        next_id = len(all_users) + 1
+        insert_into_db("insert into users (username,password) values ('" + username + "','" + generate_password_hash(password) + "')")
+        return redirect(url_for("login"))
+
+#login
+@app.route("/login", methods=['GET','POST'])
+def login():
+    return render_template("login.html")
+
 
 # Home Route
-@app.route("/")
+@app.route("/home")
 @auth.login_required
 def hello():
     return render_template(
@@ -254,4 +304,5 @@ def init_db():
 
 
 if __name__ == "__main__":
+    #init_db()
     app.run(host="0.0.0.0")

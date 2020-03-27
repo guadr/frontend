@@ -19,7 +19,8 @@ CREATE TABLE robot_location(
 
 CREATE TABLE users(
 	username text not null,
-	password text not null
+	password text not null,
+	id integer PRIMARY KEY AUTOINCREMENT
 );
 
 INSERT INTO delivery_location ( latitude, longitude) VALUES(
