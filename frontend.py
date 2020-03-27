@@ -4,22 +4,40 @@ from flask import Flask, render_template, url_for, jsonify, request, abort, g, r
 import pytest
 from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import check_password_hash,generate_password_hash
-from flask_login import LoginManager
+from flask_login import LoginManager, UserMixin, login_user, login_required, current_user, logout_user
 
 
-"""
-authorization using https://github.com/miguelgrinberg/Flask-HTTPAuth
-"""
+class User():
+    def __init__(self, id, username, password):
+        self.id = id
+        self.username = username
+        self.password = password
+    def is_active(self):
+        return True
+    def is_authenticated(self):
+        return True
+    def is_anonymous(self):
+        return False
+    def get_id(self):
+        return unicode(self.id)
+
+
 DATABASE = "../instance/GUADR.db"
 app = Flask(__name__)
 auth = HTTPBasicAuth()
 
-#login_manager = LoginManager()
-#login_manager.init_app(app)
+login_manager = LoginManager()
+login_manager.login_view = 'login'
+login_manager.init_app(app)
+
+@login_manager.user_loader
+def load_user(user_id):
+    curr_user = query_db("select * from users where id = (?)", (user_id,))
+    user = User(curr_user[0]['id'],curr_user[0]['username'],curr_user[0]['password'])
+    return user
 
 #set the secret key
 #####REMOVE BEFORE PUSh#
-app.secret_key='lookatallthosechickens'
 
 # Set Variables
 current_percentage = 0.0
@@ -79,28 +97,21 @@ def signup():
     password = request.form.get('UserP')
 
     #check to see if the user exists in the system,
-    #if user exists
-        #render signup
-    #else 
-        #create new user
-        #add new user to db
-        #redirect to login
-
     all_users = query_db("select * from users")
     username_taken = False
     for x in all_users:
         if username == x['username']:
             username_taken = True
 
-    print(username_taken)
     
+    #if username is taken
     if username_taken:
         flash("Username is taken")
         return render_template("signup.html")
     elif username is None or password is None:
-        flash("You must enter a username and password")
         return render_template("signup.html")
     else:
+        #if successfully made account.
         next_id = len(all_users) + 1
         insert_into_db("insert into users (username,password) values ('" + username + "','" + generate_password_hash(password) + "')")
         return redirect(url_for("login"))
@@ -108,13 +119,34 @@ def signup():
 #login
 @app.route("/login", methods=['GET','POST'])
 def login():
+    username = request.form.get('UserN')
+    password = request.form.get('UserP')
+
+    all_users = query_db("select * from users")
+    successful_login = False
+    for x in all_users:
+        if username == x['username'] and check_password_hash(x['password'],password):
+            user = User(x['id'],x['username'],x['password'])
+            login_user(user)
+            return redirect(url_for('home'))
+
+    if username is not  None and password is not  None:
+        flash("Incorrect Login Credentials")
+
     return render_template("login.html")
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
+
 
 
 # Home Route
 @app.route("/home")
-@auth.login_required
-def hello():
+@login_required
+def home():
     return render_template(
         "home.html",
         title="GUADR Mockup",
@@ -123,6 +155,7 @@ def hello():
         cur_per=current_percentage,
         rem_time=remaining_time,
         loc_url=location_url,
+        name=current_user.username,
     )
 
 
@@ -130,7 +163,7 @@ def hello():
 #   API      #
 ##############
 @app.route("/location/api/delivery/robot_location", methods=["GET", "POST"])
-@auth.login_required
+@login_required
 def get_robot_location():
     if request.method == "GET":
         """
@@ -181,7 +214,7 @@ def get_robot_location():
 
 
 @app.route("/location/api/delivery/delivery_location", methods=["GET", "POST"])
-@auth.login_required
+@login_required
 def get_delivery_location():
     if request.method == "GET":
         """
@@ -217,7 +250,7 @@ def get_delivery_location():
         abort(404)
 
 @app.route("/location/api/delivery/route", methods=["GET"])
-@auth.login_required
+@login_required
 def route():
     if request.method == "GET":
         """
