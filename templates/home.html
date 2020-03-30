@@ -10,12 +10,21 @@
 	<section class="main-page">
 		<div class="food-list">
 			<h3>Step 1: Select Food Items</h3>
-			<div class="food-container">
-				{% for food in foods %}
-					<div>
-						<input id="food-checkboxes" class="food-items" type="checkbox" name="food" value={{food}}>{{food}}<br>
-					</div>
+			<form method="POST" action="/home"> 
+				{% for store in stores %}
+					<button type="submit" name="store_buttons" value="{{store['username']}}">{{store['username']}}</button>  
 				{% endfor %}
+			</form>
+
+			<div class="food-container">
+				{% if foods != 0 %}
+					{% for food in foods %}
+						<div>
+							<input id="food-checkboxes" class="food-items" type="checkbox" name="food" value={{food['food_item']}}>{{food['food_item']}}<br>
+						</div>
+					
+					{% endfor %}
+				{% endif %}
 			</div>
 		</div>
 		

@@ -20,7 +20,15 @@ CREATE TABLE robot_location(
 CREATE TABLE users(
 	username text not null,
 	password text not null,
+	vender integer default 0,
 	id integer PRIMARY KEY AUTOINCREMENT
+);
+
+CREATE TABLE vender(
+	id integer,
+	food_item text not null,
+	food_price real not null
+
 );
 
 INSERT INTO delivery_location ( latitude, longitude) VALUES(

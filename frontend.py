@@ -96,6 +96,7 @@ def signup():
     username = request.form.get('UserN')
     password = request.form.get('UserP')
 
+
     #check to see if the user exists in the system,
     all_users = query_db("select * from users")
     username_taken = False
@@ -113,7 +114,10 @@ def signup():
     else:
         #if successfully made account.
         next_id = len(all_users) + 1
-        insert_into_db("insert into users (username,password) values ('" + username + "','" + generate_password_hash(password) + "')")
+        insert_into_db("insert into users (username,password) values (?,?)",
+                (username,
+                generate_password_hash(password)
+                    ))
         return redirect(url_for("login"))
 
 #login
@@ -128,6 +132,8 @@ def login():
         if username == x['username'] and check_password_hash(x['password'],password):
             user = User(x['id'],x['username'],x['password'])
             login_user(user)
+            if x['vender'] == 1:
+                return redirect(url_for('vender'))
             return redirect(url_for('home'))
 
     if username is not  None and password is not  None:
@@ -141,16 +147,61 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
+@app.route('/vender', methods=['GET','POST'])
+@login_required
+def vender():
 
+    food_name = request.form.get('foodName')
+    food_price = request.form.get('foodPrice')
+
+    if food_name is not None and food_price is not None:
+        all_food = query_db("select * from vender where id = ?",(str(current_user.id)))
+        
+        should_add = True
+        for food in all_food:
+            if food['food_item']== food_name:
+                should_add = False
+
+        if should_add:
+            insert_into_db("Insert into vender(id,food_item,food_price) values (?,?,?)",
+               (
+                str(current_user.id),
+                food_name,
+                food_price
+                   ))
+
+    all_food = query_db("select * from vender where id = ?",(str(current_user.id)))
+
+    return render_template(
+            'vender.html',
+            name=current_user.username,
+            vendor_id = current_user.id,
+            currentOfferings = all_food,
+            )
 
 # Home Route
-@app.route("/home")
+@app.route("/home", methods=["GET","POST"])
 @login_required
 def home():
+
+    chosen_food =0 
+    all_stores = query_db("select username from users where vender = 1")
+
+    if request.method == 'POST':
+
+        for store in all_stores:
+            if request.form['store_buttons'] == store['username']:
+                chosen_store = store['username']
+
+        if chosen_store is not None:
+            chosen_store_id = query_db("select id from users where username = ?", (chosen_store,))
+            chosen_food = query_db("select food_item from vender where id = ?", (chosen_store_id[0]['id'],)) 
+
     return render_template(
         "home.html",
         title="GUADR Mockup",
-        foods=food_items,
+        foods=chosen_food,
+        stores = all_stores,
         locations=delivery_locations,
         cur_per=current_percentage,
         rem_time=remaining_time,
