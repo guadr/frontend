@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<form method="POST" action="/login">
+	<label for="UserN">Username:</label><br>
+	<input type="text" name="UserN" required> <br>
+
+	
+	<label for="UserP">Password:</label><br>
+	<input type="password" name="UserP" required>
+
+	<button type="submit">Login</button>
+
+</form>
+
+<button><a href="{{ url_for('signup') }}">Signup</a></button>
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <li color="red">{{ messages[0] }} </li>
+  {% endif %}
+{% endwith %}
+
+
+{% endblock %}

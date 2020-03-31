@@ -1,17 +1,43 @@
 import sqlite3
 import datetime
-from flask import Flask, render_template, url_for, jsonify, request, abort, g
+from flask import Flask, render_template, url_for, jsonify, request, abort, g, redirect, flash
 import pytest
 from flask_httpauth import HTTPBasicAuth
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash,generate_password_hash
+from flask_login import LoginManager, UserMixin, login_user, login_required, current_user, logout_user
 
 
-"""
-authorization using https://github.com/miguelgrinberg/Flask-HTTPAuth
-"""
+class User():
+    def __init__(self, id, username, password):
+        self.id = id
+        self.username = username
+        self.password = password
+    def is_active(self):
+        return True
+    def is_authenticated(self):
+        return True
+    def is_anonymous(self):
+        return False
+    def get_id(self):
+        return unicode(self.id)
+
+
 DATABASE = "../instance/GUADR.db"
 app = Flask(__name__)
 auth = HTTPBasicAuth()
+
+login_manager = LoginManager()
+login_manager.login_view = 'login'
+login_manager.init_app(app)
+
+@login_manager.user_loader
+def load_user(user_id):
+    curr_user = query_db("select * from users where id = (?)", (user_id,))
+    user = User(curr_user[0]['id'],curr_user[0]['username'],curr_user[0]['password'])
+    return user
+
+#set the secret key
+#####REMOVE BEFORE PUSh#
 
 # Set Variables
 current_percentage = 0.0
@@ -60,19 +86,127 @@ def verify_password(username, password):
         return True
     return False
 
+@app.route("/")
+def base():
+    return redirect(url_for('login'))
+
+#signup
+@app.route("/signup", methods=['GET','POST'])
+def signup():
+    username = request.form.get('UserN')
+    password = request.form.get('UserP')
+
+
+    #check to see if the user exists in the system,
+    all_users = query_db("select * from users")
+    username_taken = False
+    for x in all_users:
+        if username == x['username']:
+            username_taken = True
+
+    
+    #if username is taken
+    if username_taken:
+        flash("Username is taken")
+        return render_template("signup.html")
+    elif username is None or password is None:
+        return render_template("signup.html")
+    else:
+        #if successfully made account.
+        next_id = len(all_users) + 1
+        insert_into_db("insert into users (username,password) values (?,?)",
+                (username,
+                generate_password_hash(password)
+                    ))
+        return redirect(url_for("login"))
+
+#login
+@app.route("/login", methods=['GET','POST'])
+def login():
+    username = request.form.get('UserN')
+    password = request.form.get('UserP')
+
+    all_users = query_db("select * from users")
+    successful_login = False
+    for x in all_users:
+        if username == x['username'] and check_password_hash(x['password'],password):
+            user = User(x['id'],x['username'],x['password'])
+            login_user(user)
+            if x['vender'] == 1:
+                return redirect(url_for('vender'))
+            return redirect(url_for('home'))
+
+    if username is not  None and password is not  None:
+        flash("Incorrect Login Credentials")
+
+    return render_template("login.html")
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
+
+@app.route('/vender', methods=['GET','POST'])
+@login_required
+def vender():
+
+    food_name = request.form.get('foodName')
+    food_price = request.form.get('foodPrice')
+
+    if food_name is not None and food_price is not None:
+        all_food = query_db("select * from vender where id = ?",(str(current_user.id)))
+        
+        should_add = True
+        for food in all_food:
+            if food['food_item']== food_name:
+                should_add = False
+
+        if should_add:
+            insert_into_db("Insert into vender(id,food_item,food_price) values (?,?,?)",
+               (
+                str(current_user.id),
+                food_name,
+                food_price
+                   ))
+
+    all_food = query_db("select * from vender where id = ?",(str(current_user.id)))
+
+    return render_template(
+            'vender.html',
+            name=current_user.username,
+            vendor_id = current_user.id,
+            currentOfferings = all_food,
+            )
 
 # Home Route
-@app.route("/")
-@auth.login_required
-def hello():
+@app.route("/home", methods=["GET","POST"])
+@login_required
+def home():
+
+    chosen_food =0 
+    all_stores = query_db("select username from users where vender = 1")
+
+    if request.method == 'POST':
+
+        for store in all_stores:
+            if request.form['store_buttons'] == store['username']:
+                chosen_store = store['username']
+
+        if chosen_store is not None:
+            chosen_store_id = query_db("select id from users where username = ?", (chosen_store,))
+            chosen_food = query_db("select food_item from vender where id = ?", (chosen_store_id[0]['id'],)) 
+
     return render_template(
         "home.html",
         title="GUADR Mockup",
-        foods=food_items,
+        foods=chosen_food,
+        stores = all_stores,
         locations=delivery_locations,
         cur_per=current_percentage,
         rem_time=remaining_time,
         loc_url=location_url,
+        name=current_user.username,
     )
 
 
@@ -80,7 +214,7 @@ def hello():
 #   API      #
 ##############
 @app.route("/location/api/delivery/robot_location", methods=["GET", "POST"])
-@auth.login_required
+@login_required
 def get_robot_location():
     if request.method == "GET":
         """
@@ -131,7 +265,7 @@ def get_robot_location():
 
 
 @app.route("/location/api/delivery/delivery_location", methods=["GET", "POST"])
-@auth.login_required
+@login_required
 def get_delivery_location():
     if request.method == "GET":
         """
@@ -167,7 +301,7 @@ def get_delivery_location():
         abort(404)
 
 @app.route("/location/api/delivery/route", methods=["GET"])
-@auth.login_required
+@login_required
 def route():
     if request.method == "GET":
         """
@@ -254,4 +388,5 @@ def init_db():
 
 
 if __name__ == "__main__":
+    #init_db()
     app.run(host="0.0.0.0")

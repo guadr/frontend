@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1>Welcome {{ name }} </h1>
+
+<p>Current offerings</p>
+<ul>
+{% for offering in currentOfferings %}
+<li>{{ offering['food_item'] }} , ${{offering['food_price'] }} </li>
+{% endfor %}
+</ul>
+
+<br><br><br>
+
+<form method='POST' action='/vender'>
+  <label for="foodName">Name of Food Item</label><br>
+  <input type="text" name="foodName" required><br><br>
+  
+  <label for="foodPrice">Price of Food Item</label><br>
+  <input type="text" name="foodPrice" min="0" max="100" required><br>
+
+  <button type="submit">Add to Offerings</button>
+
+</form>
+
+
+{% endblock %}
