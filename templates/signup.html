@@ -1,8 +1,12 @@
 {% extends "layout.html" %}
 
+{% block headers %}
+	<link rel="stylesheet" type="text/css" href= "{{ url_for('static', filename='signup.css') }}"> 
+	<script type="text/javascript" src="{{ url_for('static', filename='signup.js') }}"></script>
+{% endblock %}
+
+
 {% block content %}
-
-
 <form method="POST" action="/signup">
 	<label for="UserN">Enter Username:</label><br>
 	<input type="text" name="UserN" required> <br>

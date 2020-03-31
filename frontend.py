@@ -1,45 +1,36 @@
+##################
+# Imports
+##################
 import sqlite3
-import datetime
-from flask import Flask, render_template, url_for, jsonify, request, abort, g, redirect, flash
 import pytest
+import datetime
+from user import User
 from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import check_password_hash,generate_password_hash
+from flask import Flask, render_template, url_for, jsonify, request, abort, g, redirect, flash
 from flask_login import LoginManager, UserMixin, login_user, login_required, current_user, logout_user
 
 
-class User():
-    def __init__(self, id, username, password):
-        self.id = id
-        self.username = username
-        self.password = password
-    def is_active(self):
-        return True
-    def is_authenticated(self):
-        return True
-    def is_anonymous(self):
-        return False
-    def get_id(self):
-        return unicode(self.id)
-
-
-DATABASE = "../instance/GUADR.db"
+##########################
+# Flask Global Variables #
+##########################
 app = Flask(__name__)
+DATABASE = "../instance/GUADR.db"
 auth = HTTPBasicAuth()
+#set the secret key
 
+
+###############
+# Login specs #   
+###############
 login_manager = LoginManager()
 login_manager.login_view = 'login'
 login_manager.init_app(app)
 
-@login_manager.user_loader
-def load_user(user_id):
-    curr_user = query_db("select * from users where id = (?)", (user_id,))
-    user = User(curr_user[0]['id'],curr_user[0]['username'],curr_user[0]['password'])
-    return user
 
-#set the secret key
-#####REMOVE BEFORE PUSh#
-
-# Set Variables
+#############################
+# Mapping and API Variables # 
+#############################
 current_percentage = 0.0
 remaining_time = 0 
 latitude_robot = 47.667560
@@ -66,7 +57,6 @@ location_url = (
     + "%2C"
     + (str(longitude_destination))
 )
-food_items = ["Sandwich", "Soda", "Candy", "Trail Mix", "Beef Jerky", "Muffin", "La Croix", "Bang Energy Drink", "Redbull 16oz", "Eggs", "Bacon", "Pancakes"]
 delivery_locations = [
     "Foley Library",
     "Hemmingson NW Corner",
@@ -77,15 +67,9 @@ latitudes_list = [latitude_robot, latitude_destination]
 longitudes_list = [longitude_robot, longitude_destination]
 
 
-@auth.verify_password
-def verify_password(username, password):
-    base_user = query_db("select * from users", one=True)
-    if username == base_user["username"] and check_password_hash(
-        base_user["password"], password
-    ):
-        return True
-    return False
-
+##################
+#   ROUTES       #
+##################
 @app.route("/")
 def base():
     return redirect(url_for('login'))
@@ -112,7 +96,7 @@ def signup():
     elif username is None or password is None:
         return render_template("signup.html")
     else:
-        #if successfully made account.
+        #if successfully made account
         next_id = len(all_users) + 1
         insert_into_db("insert into users (username,password) values (?,?)",
                 (username,
@@ -120,7 +104,7 @@ def signup():
                     ))
         return redirect(url_for("login"))
 
-#login
+
 @app.route("/login", methods=['GET','POST'])
 def login():
     username = request.form.get('UserN')
@@ -141,16 +125,17 @@ def login():
 
     return render_template("login.html")
 
+
 @app.route('/logout')
 @login_required
 def logout():
     logout_user()
     return redirect(url_for('login'))
 
+
 @app.route('/vender', methods=['GET','POST'])
 @login_required
 def vender():
-
     food_name = request.form.get('foodName')
     food_price = request.form.get('foodPrice')
 
@@ -179,12 +164,12 @@ def vender():
             currentOfferings = all_food,
             )
 
-# Home Route
+
 @app.route("/home", methods=["GET","POST"])
 @login_required
 def home():
 
-    chosen_food =0 
+    chosen_food=0 
     all_stores = query_db("select username from users where vender = 1")
 
     if request.method == 'POST':
@@ -208,6 +193,16 @@ def home():
         loc_url=location_url,
         name=current_user.username,
     )
+
+
+###############
+# Login Manager
+###############
+@login_manager.user_loader
+def load_user(user_id):
+    curr_user = query_db("select * from users where id = (?)", (user_id,))
+    user = User(curr_user[0]['id'],curr_user[0]['username'],curr_user[0]['password'])
+    return user
 
 
 ##############
@@ -300,6 +295,7 @@ def get_delivery_location():
     else:
         abort(404)
 
+
 @app.route("/location/api/delivery/route", methods=["GET"])
 @login_required
 def route():
@@ -321,8 +317,6 @@ def route():
 """
 Database: Code adopted from https://flask.palletsprojects.com/en/1.1.x/patterns/sqlite3/
 """
-
-
 def get_db():
     """
     Connect to the dband 
@@ -364,7 +358,6 @@ def insert_into_db(query, args=()):
     db.commit()
     cur.close()
 
-
 def query_db(query, args=(), one=False):
     """
     Replies a dictionary holding
@@ -386,7 +379,5 @@ def init_db():
             db.cursor().executescript(f.read())
         db.commit()
 
-
 if __name__ == "__main__":
-    #init_db()
     app.run(host="0.0.0.0")

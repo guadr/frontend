@@ -1,5 +1,10 @@
 {% extends "layout.html" %}
 
+{% block headers %}
+	<link rel="stylesheet" type="text/css" href= "{{ url_for('static', filename='login.css') }}"> 
+	<script type="text/javascript" src="{{ url_for('static', filename='login.js') }}"></script>
+{% endblock %}
+
 {% block content %}
 <form method="POST" action="/login">
 	<label for="UserN">Username:</label><br>
