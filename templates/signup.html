@@ -3,32 +3,36 @@
 {% block headers %}
 	<link rel="stylesheet" type="text/css" href= "{{ url_for('static', filename='signup.css') }}"> 
 	<script type="text/javascript" src="{{ url_for('static', filename='signup.js') }}"></script>
+	<link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+  	<meta name="viewport" content="width=device-width, initial-scale=1" />
+  	<link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
+  	<title>Create Account</title>
 {% endblock %}
 
-
 {% block content %}
-<form method="POST" action="/signup">
-	<label for="UserN">Enter Username:</label><br>
-	<input type="text" name="UserN" required> <br>
+<!--Some of the following HTML, along with the correspoding CSS file, were adapted from an
+	  implementation given here: https://speckyboy.com/login-pages-html5-css/ -->
 
-	
-	<label for="UserP">Enter Password:</label><br>
-	<input type="password" name="UserP" required><br>
+<div class="main">
+    <p class="sign">Create Account</p>
+    <form class="form1" method="POST" action="/signup"> 
+      <input class="un " type="text" placeholder="Username" name="UserN" required>
+      <input class="pass" type="password" placeholder="Password" name="UserP" required>
+      <input class="pass" type="password" placeholder="Reenter Password" name="UserP2" required>
+      <button class="submit">Create New Account</button>
+	</form>
+  <p class="signup" ><a href="{{ url_for('login') }}">Return to login page</a></p>
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      {% for message in messages %}
+        <p class="flashed">{{ message }} </p>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+</div>
 
-	<button type="submit">Create Account</button>
-
-</form>
-
-<button><a href="{{ url_for('login') }}">Go to Login</a></button>
 
 
-{% with messages = get_flashed_messages() %}
-  {% if messages %}
-    {% for message in messages %}
-    <li color="red">{{ message }} </li>
-    {% endfor %}
-  {% endif %}
-{% endwith %}
 
 
 

@@ -9,6 +9,9 @@ from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import check_password_hash,generate_password_hash
 from flask import Flask, render_template, url_for, jsonify, request, abort, g, redirect, flash
 from flask_login import LoginManager, UserMixin, login_user, login_required, current_user, logout_user
+import Tkinter
+import tkMessageBox
+
 
 
 ##########################
@@ -18,7 +21,7 @@ app = Flask(__name__)
 DATABASE = "../instance/GUADR.db"
 auth = HTTPBasicAuth()
 #set the secret key
-
+app.secret_key = "password"
 
 ###############
 # Login specs #   
@@ -77,8 +80,20 @@ def base():
 #signup
 @app.route("/signup", methods=['GET','POST'])
 def signup():
+    
     username = request.form.get('UserN')
     password = request.form.get('UserP')
+    passcheck = request.form.get('UserP2')
+
+    #check to see if password is longer than 8 characters
+    pass_short = False
+    if password is None or len(password) < 8:
+        pass_short = True
+
+    #check to see if the password entries match
+    pass_mismatch = False
+    if password != passcheck:
+        pass_mismatch = True
 
 
     #check to see if the user exists in the system,
@@ -90,8 +105,14 @@ def signup():
 
     
     #if username is taken
-    if username_taken:
-        flash("Username is taken")
+    if pass_mismatch:
+        flash("Password entries don't match")
+        return render_template("signup.html")
+    elif username_taken:
+        flash("Username is already taken")
+        return render_template("signup.html")
+    elif pass_short:
+        flash("Password must be at least 8 characters long")
         return render_template("signup.html")
     elif username is None or password is None:
         return render_template("signup.html")
@@ -195,9 +216,9 @@ def home():
     )
 
 
-###############
-# Login Manager
-###############
+#################
+# Login Manager #
+#################
 @login_manager.user_loader
 def load_user(user_id):
     curr_user = query_db("select * from users where id = (?)", (user_id,))
@@ -380,4 +401,4 @@ def init_db():
         db.commit()
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0")
+	app.run(host="0.0.0.0")
