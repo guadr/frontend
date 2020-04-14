@@ -128,19 +128,25 @@ def signup():
 
 @app.route("/login", methods=['GET','POST'])
 def login():
+    #Get username and password from the form
     username = request.form.get('UserN')
     password = request.form.get('UserP')
 
+    #get all users to check against
     all_users = query_db("select * from users")
     successful_login = False
+
+    #Iterate through all users and check if its the correct information
     for x in all_users:
         if username == x['username'] and check_password_hash(x['password'],password):
+            #create user for login, login them in and check if vender or user
             user = User(x['id'],x['username'],x['password'])
             login_user(user)
             if x['vender'] == 1:
                 return redirect(url_for('vender'))
             return redirect(url_for('home'))
-
+    
+    #Check for incorrect login
     if username is not  None and password is not  None:
         flash("Incorrect Login Credentials")
 
@@ -157,17 +163,22 @@ def logout():
 @app.route('/vender', methods=['GET','POST'])
 @login_required
 def vender():
+    #get the entered food name and price
     food_name = request.form.get('foodName')
     food_price = request.form.get('foodPrice')
 
+    #Add the food to the venders items
     if food_name is not None and food_price is not None:
+        #Get the vender id
         all_food = query_db("select * from vender where id = ?",(str(current_user.id)))
         
+        #Check if food item already in
         should_add = True
         for food in all_food:
             if food['food_item']== food_name:
                 should_add = False
 
+        #if not, insert it
         if should_add:
             insert_into_db("Insert into vender(id,food_item,food_price) values (?,?,?)",
                (
@@ -176,6 +187,7 @@ def vender():
                 food_price
                    ))
 
+    #update food list
     all_food = query_db("select * from vender where id = ?",(str(current_user.id)))
 
     return render_template(
