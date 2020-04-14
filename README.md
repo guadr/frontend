@@ -12,22 +12,22 @@ mkdir ~/Documents/GUADR_frontend
 cd ~/Documents/GUADR_frontend
 ```
 
-1. Clone the repository.
+2. Clone the repository.
 ```
 git clone git@github.com:guadr/frontend.git
 ```
 
-1. Install dependencies
+3. Install dependencies
 ```python3
 pip install -r requirements.txt
 ```
 
-1. Create instance Folder for DB
+4. Create instance Folder for DB
 ```
 mkdir instance
 ```
 
-1. run the application 
+5. run the application 
 ```
 python3 frontend.py
 ```
