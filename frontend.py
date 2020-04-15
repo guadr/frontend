@@ -2,6 +2,7 @@
 # Imports
 ##################
 import sqlite3
+from sqlite3 import OperationalError
 import pytest
 import datetime
 from user import User
@@ -11,6 +12,7 @@ from flask import Flask, render_template, url_for, jsonify, request, abort, g, r
 from flask_login import LoginManager, UserMixin, login_user, login_required, current_user, logout_user
 import Tkinter
 import tkMessageBox
+
 
 
 
@@ -352,8 +354,8 @@ Database: Code adopted from https://flask.palletsprojects.com/en/1.1.x/patterns/
 """
 def get_db():
     """
-    Connect to the dband 
-    returns the db connection
+    Connect to the db and 
+    return the db connection
     """
     db = getattr(g, "_database", None)
     if db is None:
@@ -409,8 +411,12 @@ def init_db():
     with app.app_context():
         db = get_db()
         with app.open_resource("schema.sql", mode="r") as f:
-            db.cursor().executescript(f.read())
+            try: 
+                db.cursor().executescript(f.read())
+            except OperationalError:
+                print("database already substantiated")
         db.commit()
 
 if __name__ == "__main__":
-	app.run(host="0.0.0.0")
+    init_db()
+    app.run(host="0.0.0.0")
