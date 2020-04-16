@@ -139,6 +139,7 @@ function updateOSM(lat_start, long_start, lat_end, long_end){
 			);             
 	vectorLayer.addFeatures(feature_end);
 
+	console.log(lat + " " + lon);
 
 }
 
@@ -186,11 +187,9 @@ window.addEventListener("load", function() {
 		if (!ordered){
 			//check for chosen items
 			items = document.getElementsByClassName("food-items");
-			item_string = ""
 			for(var i = 0; i< items.length; i++){
 				if(items[i].checked == true){
-					chosen_items.push(items[i].value);
-					item_string = item_string + items[i].value + ","
+					chosen_items.push(items[0]);
 				}
 			}
 
@@ -214,8 +213,6 @@ window.addEventListener("load", function() {
 				var data = new FormData();
 				data.append("latitude",delivery_lat);
 				data.append("longitude",delivery_long);
-				data.append("del_loc",chosen_Location);
-				data.append("food_items",item_string);
 				xhr.open('POST', '/location/api/delivery/delivery_location');
 				xhr.send(data);
 				ordered = true;
