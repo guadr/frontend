@@ -5,7 +5,9 @@ DROP TABLE IF EXISTS users;
 CREATE TABLE delivery_location(
 	delivery_id integer PRIMARY KEY AUTOINCREMENT,
 	latitude DOUBLE not null,
-	longitude DOUBLE not null
+	longitude DOUBLE not null,
+	del_loc text,
+	food_items text
 );
 
 CREATE TABLE robot_location(
@@ -31,12 +33,13 @@ CREATE TABLE vender(
 
 );
 
-INSERT INTO delivery_location ( latitude, longitude) VALUES(
+INSERT INTO delivery_location (delivery_id, latitude, longitude) VALUES(
+	0,
 	47.666867,
 	-117.4017010);
 
 INSERT INTO robot_location (del_id, time, latitude, longitude, perc_complete ) VALUES(
-	1,
+	0,
 	datetime('now','localtime'),
 	47.666867,
 	-117.4017010,

@@ -323,8 +323,8 @@ def get_delivery_location():
         ]
 
         insert_into_db(
-            "INSERT INTO delivery_location ( latitude, longitude) VALUES (?, ?)",
-            (float(request.form["latitude"]), float(request.form["longitude"])),
+            "INSERT INTO delivery_location ( latitude, longitude, del_loc, food_items) VALUES (?, ?,?,?)",
+            (float(request.form["latitude"]), float(request.form["longitude"]), request.form["del_loc"], str(request.form["food_items"])),
         )
         return jsonify(delivery), 201
     else:
@@ -418,5 +418,5 @@ def init_db():
         db.commit()
 
 if __name__ == "__main__":
-    init_db()
+    #init_db()
     app.run(host="0.0.0.0")
