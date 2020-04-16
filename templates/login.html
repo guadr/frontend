@@ -1,19 +1,31 @@
 {% extends "layout.html" %}
 
+{% block headers %}
+	<link rel="stylesheet" type="text/css" href= "{{ url_for('static', filename='login.css') }}"> 
+	<script type="text/javascript" src="{{ url_for('static', filename='login.js') }}"></script>
+	<link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+  	<meta name="viewport" content="width=device-width, initial-scale=1" />
+  	<link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
+  	<title>Sign in</title>
+{% endblock %}
+
 {% block content %}
-<form method="POST" action="/login">
-	<label for="UserN">Username:</label><br>
-	<input type="text" name="UserN" required> <br>
+<!--Some of the following HTML, along with the correspoding CSS file, were adapted from an
+	implementation given here: https://speckyboy.com/login-pages-html5-css/ -->
 
-	
-	<label for="UserP">Password:</label><br>
-	<input type="password" name="UserP" required>
+<div class="main">
+    <p class="sign">Sign in</p>
+    <form class="form1" method="POST" action="/login"> 
+      <input class="un " type="text" placeholder="Username" name="UserN" required>
+      <input class="pass" type="password" placeholder="Password" name="UserP" required>
+      <button class="submit">Sign in</button>
+	</form>
+	<p class="signup" ><a href="{{ url_for('signup') }}">Sign up for a GUADR account</a></p>
+</div>
 
-	<button type="submit">Login</button>
 
-</form>
 
-<button><a href="{{ url_for('signup') }}">Signup</a></button>
+
 
 {% with messages = get_flashed_messages() %}
   {% if messages %}

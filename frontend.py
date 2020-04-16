@@ -1,45 +1,41 @@
+##################
+# Imports
+##################
 import sqlite3
-import datetime
-from flask import Flask, render_template, url_for, jsonify, request, abort, g, redirect, flash
+from sqlite3 import OperationalError
 import pytest
+import datetime
+from user import User
 from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import check_password_hash,generate_password_hash
+from flask import Flask, render_template, url_for, jsonify, request, abort, g, redirect, flash
 from flask_login import LoginManager, UserMixin, login_user, login_required, current_user, logout_user
+import Tkinter
+import tkMessageBox
 
 
-class User():
-    def __init__(self, id, username, password):
-        self.id = id
-        self.username = username
-        self.password = password
-    def is_active(self):
-        return True
-    def is_authenticated(self):
-        return True
-    def is_anonymous(self):
-        return False
-    def get_id(self):
-        return unicode(self.id)
 
 
-DATABASE = "../instance/GUADR.db"
+##########################
+# Flask Global Variables #
+##########################
 app = Flask(__name__)
+DATABASE = "../instance/GUADR.db"
 auth = HTTPBasicAuth()
+#set the secret key
+app.secret_key = "password"
 
+###############
+# Login specs #   
+###############
 login_manager = LoginManager()
 login_manager.login_view = 'login'
 login_manager.init_app(app)
 
-@login_manager.user_loader
-def load_user(user_id):
-    curr_user = query_db("select * from users where id = (?)", (user_id,))
-    user = User(curr_user[0]['id'],curr_user[0]['username'],curr_user[0]['password'])
-    return user
 
-#set the secret key
-#####REMOVE BEFORE PUSh#
-
-# Set Variables
+#############################
+# Mapping and API Variables # 
+#############################
 current_percentage = 0.0
 remaining_time = 0 
 latitude_robot = 47.667560
@@ -66,7 +62,6 @@ location_url = (
     + "%2C"
     + (str(longitude_destination))
 )
-food_items = ["Sandwich", "Soda", "Candy", "Trail Mix", "Beef Jerky", "Muffin", "La Croix", "Bang Energy Drink", "Redbull 16oz", "Eggs", "Bacon", "Pancakes"]
 delivery_locations = [
     "Foley Library",
     "Hemmingson NW Corner",
@@ -77,15 +72,9 @@ latitudes_list = [latitude_robot, latitude_destination]
 longitudes_list = [longitude_robot, longitude_destination]
 
 
-@auth.verify_password
-def verify_password(username, password):
-    base_user = query_db("select * from users", one=True)
-    if username == base_user["username"] and check_password_hash(
-        base_user["password"], password
-    ):
-        return True
-    return False
-
+##################
+#   ROUTES       #
+##################
 @app.route("/")
 def base():
     return redirect(url_for('login'))
@@ -93,8 +82,20 @@ def base():
 #signup
 @app.route("/signup", methods=['GET','POST'])
 def signup():
+    
     username = request.form.get('UserN')
     password = request.form.get('UserP')
+    passcheck = request.form.get('UserP2')
+
+    #check to see if password is longer than 8 characters
+    pass_short = False
+    if password is None or len(password) < 8:
+        pass_short = True
+
+    #check to see if the password entries match
+    pass_mismatch = False
+    if password != passcheck:
+        pass_mismatch = True
 
 
     #check to see if the user exists in the system,
@@ -106,13 +107,19 @@ def signup():
 
     
     #if username is taken
-    if username_taken:
-        flash("Username is taken")
+    if pass_mismatch:
+        flash("Password entries don't match")
+        return render_template("signup.html")
+    elif username_taken:
+        flash("Username is already taken")
+        return render_template("signup.html")
+    elif pass_short:
+        flash("Password must be at least 8 characters long")
         return render_template("signup.html")
     elif username is None or password is None:
         return render_template("signup.html")
     else:
-        #if successfully made account.
+        #if successfully made account
         next_id = len(all_users) + 1
         insert_into_db("insert into users (username,password) values (?,?)",
                 (username,
@@ -120,26 +127,33 @@ def signup():
                     ))
         return redirect(url_for("login"))
 
-#login
+
 @app.route("/login", methods=['GET','POST'])
 def login():
+    #Get username and password from the form
     username = request.form.get('UserN')
     password = request.form.get('UserP')
 
+    #get all users to check against
     all_users = query_db("select * from users")
     successful_login = False
+
+    #Iterate through all users and check if its the correct information
     for x in all_users:
         if username == x['username'] and check_password_hash(x['password'],password):
+            #create user for login, login them in and check if vender or user
             user = User(x['id'],x['username'],x['password'])
             login_user(user)
             if x['vender'] == 1:
                 return redirect(url_for('vender'))
             return redirect(url_for('home'))
-
+    
+    #Check for incorrect login
     if username is not  None and password is not  None:
         flash("Incorrect Login Credentials")
 
     return render_template("login.html")
+
 
 @app.route('/logout')
 @login_required
@@ -147,21 +161,26 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
+
 @app.route('/vender', methods=['GET','POST'])
 @login_required
 def vender():
-
+    #get the entered food name and price
     food_name = request.form.get('foodName')
     food_price = request.form.get('foodPrice')
 
+    #Add the food to the venders items
     if food_name is not None and food_price is not None:
+        #Get the vender id
         all_food = query_db("select * from vender where id = ?",(str(current_user.id)))
         
+        #Check if food item already in
         should_add = True
         for food in all_food:
             if food['food_item']== food_name:
                 should_add = False
 
+        #if not, insert it
         if should_add:
             insert_into_db("Insert into vender(id,food_item,food_price) values (?,?,?)",
                (
@@ -170,6 +189,7 @@ def vender():
                 food_price
                    ))
 
+    #update food list
     all_food = query_db("select * from vender where id = ?",(str(current_user.id)))
 
     return render_template(
@@ -179,12 +199,12 @@ def vender():
             currentOfferings = all_food,
             )
 
-# Home Route
+
 @app.route("/home", methods=["GET","POST"])
 @login_required
 def home():
 
-    chosen_food =0 
+    chosen_food=0 
     all_stores = query_db("select username from users where vender = 1")
 
     if request.method == 'POST':
@@ -208,6 +228,16 @@ def home():
         loc_url=location_url,
         name=current_user.username,
     )
+
+
+#################
+# Login Manager #
+#################
+@login_manager.user_loader
+def load_user(user_id):
+    curr_user = query_db("select * from users where id = (?)", (user_id,))
+    user = User(curr_user[0]['id'],curr_user[0]['username'],curr_user[0]['password'])
+    return user
 
 
 ##############
@@ -293,12 +323,13 @@ def get_delivery_location():
         ]
 
         insert_into_db(
-            "INSERT INTO delivery_location ( latitude, longitude) VALUES (?, ?)",
-            (float(request.form["latitude"]), float(request.form["longitude"])),
+            "INSERT INTO delivery_location ( latitude, longitude, del_loc, food_items) VALUES (?, ?,?,?)",
+            (float(request.form["latitude"]), float(request.form["longitude"]), request.form["del_loc"], str(request.form["food_items"])),
         )
         return jsonify(delivery), 201
     else:
         abort(404)
+
 
 @app.route("/location/api/delivery/route", methods=["GET"])
 @login_required
@@ -321,12 +352,10 @@ def route():
 """
 Database: Code adopted from https://flask.palletsprojects.com/en/1.1.x/patterns/sqlite3/
 """
-
-
 def get_db():
     """
-    Connect to the dband 
-    returns the db connection
+    Connect to the db and 
+    return the db connection
     """
     db = getattr(g, "_database", None)
     if db is None:
@@ -364,7 +393,6 @@ def insert_into_db(query, args=()):
     db.commit()
     cur.close()
 
-
 def query_db(query, args=(), one=False):
     """
     Replies a dictionary holding
@@ -383,9 +411,11 @@ def init_db():
     with app.app_context():
         db = get_db()
         with app.open_resource("schema.sql", mode="r") as f:
-            db.cursor().executescript(f.read())
+            try: 
+                db.cursor().executescript(f.read())
+            except OperationalError:
+                print("database already substantiated")
         db.commit()
-
 
 if __name__ == "__main__":
     #init_db()
