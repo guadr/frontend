@@ -6,27 +6,41 @@
 {% endblock %}
 
 {% block content %}
-<h1>Welcome {{ name }} </h1>
 
-<p>Current offerings</p>
-<ul>
-{% for offering in currentOfferings %}
-<li>{{ offering['food_item'] }} , ${{offering['food_price'] }} </li>
-{% endfor %}
-</ul>
+<div class="logout-div">
+  <a class="input-button" href="{{ url_for('logout') }}">
+    <strong>Logout</strong>
+  </a>
+</div>
+
+<div class="welcomeDiv">
+  <h1 class="welcome">Welcome, {{ name }}!</h1>
+
+  <p>Current Menu:</p>
+  <ul>
+    {% for offering in currentOfferings %}
+    <li>{{ offering['food_item'] }} , ${{offering['food_price'] }} </li>
+    {% endfor %}
+  </ul>
+</div>
 
 <br><br><br>
+<div class="main">
+  <form class="form1" method='POST' action='/vender'>
+    <!--
+    <label class="foodNameLabel" for="foodName">Name of Food Item</label><br>
+    <input class="foodNameInput" type="text" name="foodName" required><br><br>
+    <label class="foodPriceLabel" for="foodPrice">Price of Food Item</label><br>
+    <input class="foodPriceInput" type="text" name="foodPrice" min="0" max="100" required><br>
+    <button class="submit" type="submit">Add to Offerings</button>
+    -->
 
-<form method='POST' action='/vender'>
-  <label for="foodName">Name of Food Item</label><br>
-  <input type="text" name="foodName" required><br><br>
-  
-  <label for="foodPrice">Price of Food Item</label><br>
-  <input type="text" name="foodPrice" min="0" max="100" required><br>
+    <input class="foodName" type="text" placeholder="Name of Food Item" name="foodName" required>
+    <input class="foodPrice" type="text" min="0" max="100" placeholder="Price of Food Item (USD)" name="foodPrice" required>
+    <button class="submit" type="submit">Submit Food Item</button>
 
-  <button type="submit">Add to Offerings</button>
-
-</form>
+  </form>
+</div>
 
 
 {% endblock %}
