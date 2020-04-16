@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS delivery_location;
 DROP TABLE IF EXISTS robot_location;
 DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS vender;
 
 CREATE TABLE delivery_location(
 	delivery_id integer PRIMARY KEY AUTOINCREMENT,
