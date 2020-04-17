@@ -209,12 +209,6 @@ window.addEventListener("load", function() {
 				document.getElementById("hemm-go-button").disabled = true;
 				document.getElementById("food-checkboxes").disabled = true;
 				
-				var xhr = new XMLHttpRequest();
-				var data = new FormData();
-				data.append("latitude",delivery_lat);
-				data.append("longitude",delivery_long);
-				xhr.open('POST', '/location/api/delivery/delivery_location');
-				xhr.send(data);
 				ordered = true;
 
 				//update every 5 seconds once an order has been placed
