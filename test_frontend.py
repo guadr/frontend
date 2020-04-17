@@ -9,38 +9,31 @@ import sys
 Test GET and POST functionality
 for both endpoints
 """
-def test_APIs(u, p):
+def test_redirect_home_to_login():
     session = requests.Session()
-    session.auth = (u, p)
+    session.auth = ("reid", "reidreid")
+    x = session.get("http://guadr.gonzaga.edu/home")
+    assert str(x.url[20:25] == 'login')
 
-    x = session.post(
-        "https://guadr.com/location/api/delivery/robot_location",
-        data={"latitude": 9, "longitude": 8},
-    )
-    json_request = json.loads(x.content)
-    assert isinstance(json_request[0]["latitude"], float)
-    assert isinstance(json_request[0]["longitude"], float)
+def test_login():
+    session = requests.Session()
+    session.auth = ("reid", "reidreid")
+    x = session.get("http://guadr.gonzaga.edu/login")
+    assert x.status_code == 200
 
-    x = session.get("https://guadr.com/location/api/delivery/delivery_location")
-    json_request = json.loads(x.content)
-    assert isinstance(json_request[0]["latitude"], float)
-    assert isinstance(json_request[0]["longitude"], float)
+def test_signup():
+    session = requests.Session()
+    session.auth = ("reid", "reidreid")
+    x = session.get("http://guadr.gonzaga.edu/signup")
+    assert x.status_code == 200
 
-    x = session.post(
-        "https://guadr.com/location/api/delivery/robot_location",
-        data={"latitude": 9, "longitude": 8, "perc_complete": 0},
-    )
-    json_request = json.loads(x.content)
-    assert isinstance(json_request[0]["latitude"], float)
-    assert isinstance(json_request[0]["longitude"], float)
-    assert isinstance(json_request[0]["perc_complete"], float)
+def test_vendor():
+    session = requests.Session()
+    session.auth = ("reid", "reidreid")
+    x = session.get("http://guadr.gonzaga.edu/vender")
+    assert x.status_code == 200
 
-    x = session.get("https://guadr.com/location/api/delivery/robot_location")
-    json_request = json.loads(x.content)
-    assert isinstance(json_request[0]["latitude"], float)
-    assert isinstance(json_request[0]["longitude"], float)
-    assert isinstance(json_request[0]["perc_complete"], float)
-
+  
 
 """
 Test DB 
@@ -49,7 +42,7 @@ def test_DB():
     with app.app_context():
         frontend.init_db()
         frontend.insert_into_db(
-            "INSERT INTO robot_location (del_id, time, latitude, longitude) VALUES (0,0,0,0)"
+            "INSERT INTO robot_location (del_id, time, latitude, longitude,perc_complete) VALUES (0,0,0,0,0.0)"
         )
         result = frontend.query_db("select * from robot_location where del_id = 0")
         result_fail = frontend.query_db(

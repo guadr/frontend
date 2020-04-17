@@ -21,6 +21,7 @@ app = Flask(__name__)
 DATABASE = "../instance/GUADR.db"
 auth = HTTPBasicAuth()
 #set the secret key
+app.secret_key = "secret"
 
 ###############
 # Login specs #   
@@ -168,6 +169,10 @@ def vender():
 
     #Add the food to the venders items
     if food_name is not None and food_price is not None:
+        food_price = float(food_price)
+        food_price = "{:.2f}".format(food_price)
+
+
         #Get the vender id
         all_food = query_db("select * from vender where id = ?",(str(current_user.id)))
         
@@ -188,6 +193,9 @@ def vender():
 
     #update food list
     all_food = query_db("select * from vender where id = ?",(str(current_user.id)))
+    for food_item in all_food:
+        food_item['food_price'] =  float(food_item['food_price']) 
+        food_item['food_price'] =  "{:.2f}".format( food_item['food_price'] )
 
     return render_template(
             'vender.html',
@@ -316,6 +324,9 @@ def get_delivery_location():
             {
                 "latitude": float(request.form["latitude"]),
                 "longitude": float(request.form["longitude"]),
+                "del_loc": str(request.form["del_loc"]),
+                "food_items": str(request.form["food_items"])
+
             }
         ]
 
