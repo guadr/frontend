@@ -10,8 +10,6 @@ from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import check_password_hash,generate_password_hash
 from flask import Flask, render_template, url_for, jsonify, request, abort, g, redirect, flash
 from flask_login import LoginManager, UserMixin, login_user, login_required, current_user, logout_user
-import Tkinter
-import tkMessageBox
 
 
 
