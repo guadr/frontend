@@ -32,6 +32,9 @@ mkdir instance
 python3 frontend.py
 ```
 
+6. We currently have a 'dummy' secret key on this repository. We change this when it is actually deployed. Make sure to make a good secrey key when deploying. Learn more here 
+https://flask.palletsprojects.com/en/1.1.x/config/#SECRET_KEY
+
 ## Update on web server 
 ```
 virtualenv .env && source .env/bin/activate && pip install -r requirements.txt
