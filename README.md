@@ -37,3 +37,6 @@ python3 frontend.py
 virtualenv .env && source .env/bin/activate && pip install -r requirements.txt
 ```
 
+# Expansions To Take On
+1. Add Payment Capabilities
+2. Add Notification Sysytem
