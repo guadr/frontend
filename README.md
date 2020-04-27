@@ -39,7 +39,7 @@ pip install -r requirements.txt
 
 4. Create instance Folder for DB
 ```
-mkdir instance
+mkdir ~/Documents/GUADR_frontend/instance
 ```
 
 5. run the application 
