@@ -80,50 +80,53 @@ def base():
 #signup
 @app.route("/signup", methods=['GET','POST'])
 def signup():
-    
-    username = request.form.get('UserN')
-    password = request.form.get('UserP')
-    passcheck = request.form.get('UserP2')
 
-    #check to see if password is longer than 8 characters
-    pass_short = False
-    if password is None or len(password) < 8:
-        pass_short = True
+    if request.method == 'POST':
+        username = request.form.get('UserN')
+        password = request.form.get('UserP')
+        passcheck = request.form.get('UserP2')
 
-    #check to see if the password entries match
-    pass_mismatch = False
-    if password != passcheck:
-        pass_mismatch = True
+        #check to see if password is longer than 8 characters
+        pass_short = False
+        if password is None or len(password) < 8:
+            pass_short = True
+
+        #check to see if the password entries match
+        pass_mismatch = False
+        if password != passcheck:
+            pass_mismatch = True
 
 
-    #check to see if the user exists in the system,
-    all_users = query_db("select * from users")
-    username_taken = False
-    for x in all_users:
-        if username == x['username']:
-            username_taken = True
+        #check to see if the user exists in the system,
+        all_users = query_db("select * from users")
+        username_taken = False
+        for x in all_users:
+            if username == x['username']:
+                username_taken = True
 
-    
-    #if username is taken
-    if pass_mismatch:
-        flash("Password entries don't match")
-        return render_template("signup.html")
-    elif username_taken:
-        flash("Username is already taken")
-        return render_template("signup.html")
-    elif pass_short:
-        flash("Password must be at least 8 characters long")
-        return render_template("signup.html")
-    elif username is None or password is None:
-        return render_template("signup.html")
+        #if username is taken
+        if pass_mismatch:
+            flash("Password entries don't match")
+            return render_template("signup.html")
+        elif username_taken:
+            flash("Username is already taken")
+            return render_template("signup.html")
+        elif pass_short:
+            flash("Password must be at least 8 characters long")
+            return render_template("signup.html")
+        elif username is None or password is None:
+            return render_template("signup.html")
+        else:
+            #if successfully made account
+            next_id = len(all_users) + 1
+            insert_into_db("insert into users (username,password) values (?,?)",
+                    (username,
+                    generate_password_hash(password)
+                        ))
+            return redirect(url_for("login"))
     else:
-        #if successfully made account
-        next_id = len(all_users) + 1
-        insert_into_db("insert into users (username,password) values (?,?)",
-                (username,
-                generate_password_hash(password)
-                    ))
-        return redirect(url_for("login"))
+        return render_template("signup.html")
+
 
 
 @app.route("/login", methods=['GET','POST'])
