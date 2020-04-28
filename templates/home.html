@@ -30,7 +30,7 @@
 				{% if foods != 0 %}
 					{% for food in foods %}
 						<div>
-							<input id="food-checkboxes" class="food-items" type="checkbox" name="food" value={{food['food_item']}}>{{food['food_item']}}<br>
+							<input id="food-checkboxes" class="food-items" type="checkbox" name="food" value={{food['food_item']}}>{{food['food_item']}}, {{food['food_price']}}<br>
 						</div>
 					
 					{% endfor %}

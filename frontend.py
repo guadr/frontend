@@ -223,7 +223,13 @@ def home():
 
         if chosen_store is not None:
             chosen_store_id = query_db("select id from users where username = ?", (chosen_store,))
-            chosen_food = query_db("select food_item from vender where id = ?", (chosen_store_id[0]['id'],)) 
+            chosen_food = query_db("select food_item, food_price from vender where id = ?", (chosen_store_id[0]['id'],)) 
+        for food_item in chosen_food:
+            food_item['food_price'] =  float(food_item['food_price']) 
+            food_item['food_price'] =  "{:.2f}".format( food_item['food_price'] )
+            food_item['food_price'] = '$' + str(food_item['food_price']) 
+
+
 
     return render_template(
         "home.html",
