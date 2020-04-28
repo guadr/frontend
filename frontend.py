@@ -167,32 +167,38 @@ def logout():
 @login_required
 def vender():
     #get the entered food name and price
-    food_name = request.form.get('foodName')
-    food_price = request.form.get('foodPrice')
+    if request.method == "POST":
+        food_name = request.form.get('foodName')
+        food_price = request.form.get('foodPrice')
+       
+        if "delete" in request.form:
+            query_db("delete from vender where id = ? and food_item = ?", (str(current_user.id), request.form.get('delete')[7:]), commit=True)
 
-    #Add the food to the venders items
-    if food_name is not None and food_price is not None:
-        food_price = float(food_price)
-        food_price = "{:.2f}".format(food_price)
+            
+ 
+        #Add the food to the venders items
+        if food_name is not None and food_price is not None:
+            food_price = float(food_price)
+            food_price = "{:.2f}".format(food_price)
 
 
-        #Get the vender id
-        all_food = query_db("select * from vender where id = ?",(str(current_user.id)))
-        
-        #Check if food item already in
-        should_add = True
-        for food in all_food:
-            if food['food_item']== food_name:
-                should_add = False
+            #Get the vender id
+            all_food = query_db("select * from vender where id = ?",(str(current_user.id)))
+            
+            #Check if food item already in
+            should_add = True
+            for food in all_food:
+                if food['food_item']== food_name:
+                    should_add = False
 
-        #if not, insert it
-        if should_add:
-            insert_into_db("Insert into vender(id,food_item,food_price) values (?,?,?)",
-               (
-                str(current_user.id),
-                food_name,
-                food_price
-                   ))
+            #if not, insert it
+            if should_add:
+                insert_into_db("Insert into vender(id,food_item,food_price) values (?,?,?)",
+                   (
+                    str(current_user.id),
+                    food_name,
+                    food_price
+                       ))
 
     #update food list
     all_food = query_db("select * from vender where id = ?",(str(current_user.id)))
@@ -410,13 +416,16 @@ def insert_into_db(query, args=()):
     db.commit()
     cur.close()
 
-def query_db(query, args=(), one=False):
+def query_db(query, args=(), one=False, commit=False):
     """
     Replies a dictionary holding
     the response from query.
     """
+    db = get_db()
     cur = get_db().execute(query, args)
     rv = cur.fetchall()
+    if commit:
+        db.commit()
     cur.close()
     return (rv[0] if rv else None) if one else rv
 

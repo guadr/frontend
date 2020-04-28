@@ -19,7 +19,11 @@
   <p>Current Menu:</p>
   <ul>
     {% for offering in currentOfferings %}
-    	<li>{{ offering['food_item'] }} , ${{offering['food_price'] }} </li>
+    <li>{{ offering['food_item'] }}, ${{offering['food_price'] }} <br>
+	  <form class="form" method='POST' action='/vender'>
+		  <button class="submit" type="submit" value="delete_{{offering['food_item']}}" name="delete">Remove {{offering['food_item']}}</button>
+	   </form>
+</li>
     {% endfor %}
   </ul>
 </div>
